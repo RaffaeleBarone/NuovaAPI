@@ -10,17 +10,15 @@ namespace NuovaAPI.Controllers
     [ApiController]
     public class ProdottoController : ControllerBase
     {
-        //private IProdottoManager _prodottoManager;
-        //public ProdottoController(IProdottoManager prodottoManager)
-        //{
-        //    _prodottoManager = prodottoManager;
-        //}
-
+        private IProdottoManager _prodottoManager;
         private readonly IProdottoWorkerService _prodottoWorkerService;
-        public ProdottoController(IProdottoWorkerService prodottoWorkerService)
+        public ProdottoController(IProdottoManager prodottoManager, IProdottoWorkerService prodottoWorkerService)
         {
+            _prodottoManager = prodottoManager;
             _prodottoWorkerService = prodottoWorkerService;
         }
+
+        
 
         [HttpGet]
         public async Task<IResult> GetProdotti()

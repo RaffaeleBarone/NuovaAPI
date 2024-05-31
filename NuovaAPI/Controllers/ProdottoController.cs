@@ -10,10 +10,16 @@ namespace NuovaAPI.Controllers
     [ApiController]
     public class ProdottoController : ControllerBase
     {
-        private IProdottoManager _prodottoManager;
-        public ProdottoController(IProdottoManager prodottoManager)
+        //private IProdottoManager _prodottoManager;
+        //public ProdottoController(IProdottoManager prodottoManager)
+        //{
+        //    _prodottoManager = prodottoManager;
+        //}
+
+        private readonly IProdottoWorkerService _prodottoWorkerService;
+        public ProdottoController(IProdottoWorkerService prodottoWorkerService)
         {
-            _prodottoManager = prodottoManager;
+            _prodottoWorkerService = prodottoWorkerService;
         }
 
         [HttpGet]
@@ -41,9 +47,9 @@ namespace NuovaAPI.Controllers
                 return Results.BadRequest(ModelState);
             }
 
-            var prodottoWorkerService = new ProdottoWorkerService();
-            Prodotto prodotto = prodottoWorkerService.MapToProdotto(prodottoDTO);
-            await _prodottoManager.AddProdotto(prodotto);
+            //var prodottoWorkerService = new ProdottoWorkerService();
+            //Prodotto prodotto = prodottoWorkerService.MapToProdotto(prodottoDTO);
+            await _prodottoWorkerService.AddProduct(prodottoDTO);
             return Results.Ok();
         }
 

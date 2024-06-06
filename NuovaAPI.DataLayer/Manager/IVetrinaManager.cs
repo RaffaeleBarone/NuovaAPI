@@ -9,9 +9,10 @@ namespace NuovaAPI.DataLayer.Manager
 {
     public interface IVetrinaManager
     {
-        Task AddVetrina(int id);
+        Task AddVetrina(Vetrina vetrina);
         Task<ICollection<Vetrina>> GetVetrine();
         Task<Vetrina> GetIdVetrina(int id);
         Task RemoveVetrina(int id);
+        Task<Vetrina> ModificaVetrina(int id, Vetrina vetrina);
     }
 }

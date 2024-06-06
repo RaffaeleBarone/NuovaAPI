@@ -16,9 +16,8 @@ namespace NuovaAPI.DataLayer.Manager
         {
             _appDbContext = appDbContext;
         }
-        public async Task AddVetrina(int id)
+        public async Task AddVetrina(Vetrina vetrina)
         {
-            var vetrina = new Vetrina { Id = id };
             _appDbContext.Vetrine.Add(vetrina);
             await _appDbContext.SaveChangesAsync();
         }
@@ -60,6 +59,21 @@ namespace NuovaAPI.DataLayer.Manager
                     dbContextTransaction.Rollback();
                 }
             }
+        }
+
+        public async Task<Vetrina> ModificaVetrina(int id, Vetrina vetrina)
+        {
+            var vetrinaDaModificare = await _appDbContext.Vetrine.FindAsync(vetrina.Id);
+
+            if (vetrinaDaModificare == null)
+            {
+                throw new Exception("Prodotto non trovato");
+            }
+
+            vetrinaDaModificare.Id = vetrina.Id;
+
+            await _appDbContext.SaveChangesAsync();
+            return vetrinaDaModificare;
         }
     }
 }

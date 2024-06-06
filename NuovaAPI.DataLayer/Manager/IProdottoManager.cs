@@ -13,6 +13,6 @@ namespace NuovaAPI.DataLayer.Manager
         public Task RemoveProdotto(int id);
         public Task<ICollection<Prodotto>> GetProdotti();
         public Task<Prodotto> GetIdProdotto(int id);
-        public Task<bool> ModificaProdotto(Prodotto prodotto);
+        public Task<Prodotto> ModificaProdotto(int id, Prodotto prodotto);
     }
 }

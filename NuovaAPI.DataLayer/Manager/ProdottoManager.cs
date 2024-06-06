@@ -38,13 +38,13 @@ namespace NuovaAPI.DataLayer.Manager
             return _appDbContext.Prodotti.Where(x => x.Id == id).SingleOrDefault();
         }
 
-        public async Task<bool> ModificaProdotto(Prodotto prodotto)
+        public async Task<Prodotto> ModificaProdotto(int id, Prodotto prodotto)
         {
             var prodottoDaModificare = await _appDbContext.Prodotti.FindAsync(prodotto.Id);
 
             if(prodottoDaModificare == null)
             {
-                return false;
+                throw new Exception("Prodotto non trovato");
             }
 
             prodottoDaModificare.NomeProdotto = prodotto.NomeProdotto;
@@ -52,7 +52,7 @@ namespace NuovaAPI.DataLayer.Manager
             prodottoDaModificare.IdVetrina = prodotto.IdVetrina;
 
             await _appDbContext.SaveChangesAsync();
-            return true;
+            return prodottoDaModificare;
         }
     }
 }

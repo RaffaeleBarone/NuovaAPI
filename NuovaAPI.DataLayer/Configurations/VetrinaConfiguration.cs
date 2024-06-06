@@ -8,7 +8,7 @@ namespace NuovaAPI.DataLayer.Configurations
     {
         public void Configure(EntityTypeBuilder<Vetrina> builder)
         {
-            builder.ToTable("Vetrina").HasKey("Id");
+            builder.ToTable("Vetrina").HasKey(x => x.Id);
         }
     }
 }

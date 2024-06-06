@@ -8,7 +8,7 @@ namespace NuovaAPI.DataLayer.Configurations
     {
         public void Configure(EntityTypeBuilder<Prodotto> builder)
         {
-            builder.ToTable("Prodotto").HasKey("Id");
+            builder.ToTable("Prodotto").HasKey(x => x.Id);
             builder.HasOne<Vetrina>(x => x.Vetrina)
                 .WithMany(x => x.ProdottiInVetrina)
                 .HasForeignKey(x => x.IdVetrina);

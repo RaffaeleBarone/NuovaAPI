@@ -1,4 +1,5 @@
 ﻿using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Manager;
 
@@ -26,6 +27,26 @@ namespace NuovaAPI.Worker_Services
         {
             var prodotto = MapToProdotto(prodottoDTO);
             await _prodottoManager.AddProdotto(prodotto);
+        }
+
+        public async Task<ICollection<Prodotto>> GetProduct()
+        {
+            return await _prodottoManager.GetProdotti();
+        }
+
+        public async Task<Prodotto> GetProductId(int id)
+        {
+            return await _prodottoManager.GetIdProdotto(id);
+        }
+
+        public async Task<Prodotto> PutProduct(int id, Prodotto prodotto)
+        {
+            return await _prodottoManager.ModificaProdotto(id, prodotto);
+        }
+
+        public async Task DeleteProduct(int id)
+        {
+            await _prodottoManager.RemoveProdotto(id);
         }
     }
 }

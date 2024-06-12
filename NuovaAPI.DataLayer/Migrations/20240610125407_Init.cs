@@ -31,7 +31,8 @@ namespace NuovaAPI.DataLayer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CodiceVetrina = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,18 +62,20 @@ namespace NuovaAPI.DataLayer.Migrations
                 name: "Prodotto",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     NomeProdotto = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Prezzo = table.Column<float>(type: "real", nullable: false),
                     Quantita = table.Column<int>(type: "int", nullable: false),
-                    IdVetrina = table.Column<int>(type: "int", nullable: false)
+                    IdVetrina = table.Column<int>(type: "int", nullable: false),
+                    IdOrdine = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prodotto", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prodotto_Ordini_Id",
-                        column: x => x.Id,
+                        name: "FK_Prodotto_Ordini_IdOrdine",
+                        column: x => x.IdOrdine,
                         principalTable: "Ordini",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -90,9 +93,20 @@ namespace NuovaAPI.DataLayer.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Prodotto_IdOrdine",
+                table: "Prodotto",
+                column: "IdOrdine");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Prodotto_IdVetrina",
                 table: "Prodotto",
                 column: "IdVetrina");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vetrina_CodiceVetrina",
+                table: "Vetrina",
+                column: "CodiceVetrina",
+                unique: true);
         }
 
         /// <inheritdoc />

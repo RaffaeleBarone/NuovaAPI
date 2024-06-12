@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NuovaAPI.DataLayer;
 
@@ -11,9 +12,11 @@ using NuovaAPI.DataLayer;
 namespace NuovaAPI.DataLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240610125407_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,9 +60,6 @@ namespace NuovaAPI.DataLayer.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CodiceOrdine")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
@@ -75,10 +75,10 @@ namespace NuovaAPI.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("IdOrdine")
+                    b.Property<int>("IdOrdine")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdVetrina")
+                    b.Property<int>("IdVetrina")
                         .HasColumnType("int");
 
                     b.Property<string>("NomeProdotto")
@@ -134,11 +134,15 @@ namespace NuovaAPI.DataLayer.Migrations
                 {
                     b.HasOne("NuovaAPI.DataLayer.Entities.Ordini", "Ordini")
                         .WithMany("ProdottiAcquistati")
-                        .HasForeignKey("IdOrdine");
+                        .HasForeignKey("IdOrdine")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("NuovaAPI.DataLayer.Entities.Vetrina", "Vetrina")
                         .WithMany("ProdottiInVetrina")
-                        .HasForeignKey("IdVetrina");
+                        .HasForeignKey("IdVetrina")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Ordini");
 

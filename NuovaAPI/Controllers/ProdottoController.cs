@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
 
@@ -14,24 +15,48 @@ namespace NuovaAPI.Controllers
         private readonly IProdottoWorkerService _prodottoWorkerService;
         private readonly IValidator<Prodotto> _prodottoValidator;
         private readonly IValidator<ProdottoDTO> _prodottoDTOValidator;
-        public ProdottoController(/*IProdottoManager prodottoManager , */ IProdottoWorkerService prodottoWorkerService, IValidator<Prodotto> prodottoValidator, IValidator<ProdottoDTO> prodottoDTOValidator)
+        private readonly AppDbContext _appDbContext;
+        public ProdottoController(IProdottoWorkerService prodottoWorkerService, IValidator<Prodotto> prodottoValidator, IValidator<ProdottoDTO> prodottoDTOValidator, AppDbContext appDbContext)
         {
             //_prodottoManager = prodottoManager;
             _prodottoWorkerService = prodottoWorkerService;
             _prodottoValidator = prodottoValidator;
             _prodottoDTOValidator = prodottoDTOValidator;
+            _appDbContext = appDbContext;
         }
 
         [HttpGet]
         public async Task<IResult> GetProdotti()
         {
-            var prodotti = await _prodottoWorkerService.GetProduct();
-            return Results.Ok(prodotti);
+            try
+            {
+                var prodotti = await _prodottoWorkerService.GetProduct();
+                return Results.Ok(prodotti);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem($"Errore durante il recupero dei prodotti: {ex.Message}");
+            }
         }
+
         [HttpGet("{id}")]
         public async Task<IResult> GetById([FromRoute] int id)
         {
-            return Results.Ok(await _prodottoWorkerService.GetProductId(id));
+            //return Results.Ok(await _prodottoWorkerService.GetProductId(id));
+            try
+            {
+                var prodotto = await _prodottoWorkerService.GetProductId(id);
+                if (prodotto == null)
+                {
+                    return Results.NotFound($"Prodotto con ID {id} non trovato.");
+                }
+                return Results.Ok(prodotto);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem($"Errore durante il recupero del prodotto: {ex.Message}");
+            }
+
         }
 
 
@@ -39,29 +64,43 @@ namespace NuovaAPI.Controllers
         //{
         //    await _prodottoManager.AddProdotto(prodotto.NomeProdotto, prodotto.Prezzo, prodotto.IdVetrina);
         //}
+        //[HttpPost]
+        //public async Task<IResult> PostProdotto([FromBody] ProdottoDTO prodottoDTO)
+        //{
+        //    var validationResult = _prodottoDTOValidator.Validate(prodottoDTO);
+        //    if (!validationResult.IsValid)
+        //    {
+        //        return Results.BadRequest(validationResult.Errors);
+        //    }
+
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return Results.BadRequest(ModelState);
+        //    }
+
+        //    //var prodottoWorkerService = new ProdottoWorkerService();
+        //    //Prodotto prodotto = prodottoWorkerService.MapToProdotto(prodottoDTO);
+        //    await _prodottoWorkerService.AddProduct(prodottoDTO);
+        //    return Results.Ok();
+        //}
+
         [HttpPost]
         public async Task<IResult> PostProdotto([FromBody] ProdottoDTO prodottoDTO)
         {
-            var validationResult = _prodottoDTOValidator.Validate(prodottoDTO);
-            if (!validationResult.IsValid)
-            {
-                return Results.BadRequest(validationResult.Errors);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return Results.BadRequest(ModelState);
-            }
-
-            //var prodottoWorkerService = new ProdottoWorkerService();
-            //Prodotto prodotto = prodottoWorkerService.MapToProdotto(prodottoDTO);
             await _prodottoWorkerService.AddProduct(prodottoDTO);
-            return Results.Ok();
+
+
+            //if (prodotto.Id == 0)
+            //{
+            //    throw new Exception("ID is not generated!");
+            //}
+
+            return Results.Ok(prodottoDTO);
         }
 
 
         [HttpPut]
-        public async Task<IResult> PutProdotto(int id, Prodotto prodotto)
+        public async Task<IResult> PutProdotto(int id, ProdottoDTO prodottoDTO)
         {
             //if (id != prodotto.Id)
             //{
@@ -77,7 +116,7 @@ namespace NuovaAPI.Controllers
 
             //return Results.NoContent();
 
-            var validationResult = _prodottoValidator.Validate(prodotto);
+            var validationResult = _prodottoDTOValidator.Validate(prodottoDTO);
 
             if (!validationResult.IsValid)
             {
@@ -86,7 +125,7 @@ namespace NuovaAPI.Controllers
 
             try
             {
-                var updatedProduct = await _prodottoWorkerService.PutProduct(id, prodotto);
+                var updatedProduct = await _prodottoWorkerService.PutProduct(id, prodottoDTO);
 
                 if (updatedProduct == null)
                 {

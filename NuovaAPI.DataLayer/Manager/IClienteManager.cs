@@ -1,4 +1,5 @@
 ﻿using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.Commons.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace NuovaAPI.DataLayer.Manager
         Task RemoveCliente(int id);
         Task<ICollection<Cliente>> GetClienti();
         Task<Cliente> GetIdCliente(int id);
-        Task<Cliente> ModificaCliente(int id, Cliente cliente);
+        Task<Cliente> ModificaCliente(int id, ClienteDTO clienteDTO);
     }
 }

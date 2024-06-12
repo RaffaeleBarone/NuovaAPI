@@ -11,8 +11,4 @@
     <PackageReference Include="FluentValidation" Version="11.9.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NuovaAPI.DataLayer\NuovaAPI.DataLayer.csproj" />
-  </ItemGroup>
-
 </Project>

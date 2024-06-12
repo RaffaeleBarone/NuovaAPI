@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
 
@@ -14,12 +15,15 @@ namespace NuovaAPI.Controllers
         private readonly IVetrinaWorkerService _vetrinaWorkerService;
         private readonly IValidator<Vetrina> _vetrinaValidator;
         private readonly IValidator<VetrinaDTO> _vetrinaDTOValidator;
-        public VetrinaController(/*IVetrinaManager vetrinaManager, */ IVetrinaWorkerService vetrinaWorkerService, IValidator<Vetrina> vetrinaValidator, IValidator<VetrinaDTO> vetrinaDTOValidator)
+        private readonly AppDbContext _appDbContext;
+        public VetrinaController(/*IVetrinaManager vetrinaManager, */ IVetrinaWorkerService vetrinaWorkerService, IValidator<Vetrina> vetrinaValidator, IValidator<VetrinaDTO> vetrinaDTOValidator, AppDbContext appDbContext)
         {
             //_vetrinaManager = vetrinaManager;
             _vetrinaWorkerService = vetrinaWorkerService;
             _vetrinaValidator = vetrinaValidator;
             _vetrinaDTOValidator = vetrinaDTOValidator;
+            _appDbContext = appDbContext;
+
         }
 
         [HttpGet]
@@ -48,14 +52,16 @@ namespace NuovaAPI.Controllers
                 return Results.BadRequest(ModelState);
             }
 
+            
             await _vetrinaWorkerService.AddVetrina(vetrinaDTO);
+            _appDbContext.SaveChangesAsync();
             return Results.Ok();
         }
 
         [HttpPut]
-        public async Task<IResult> PutVetrina(int id, Vetrina vetrina)
+        public async Task<IResult> PutVetrina(int id, VetrinaDTO vetrinaDTO)
         {
-            var validationResult = _vetrinaValidator.Validate(vetrina);
+            var validationResult = _vetrinaDTOValidator.Validate(vetrinaDTO);
 
             if (!validationResult.IsValid)
             {
@@ -64,7 +70,7 @@ namespace NuovaAPI.Controllers
 
             try
             {
-                var updatedVetrina = await _vetrinaWorkerService.PutVetrina(id, vetrina);
+                var updatedVetrina = await _vetrinaWorkerService.PutVetrina(id, vetrinaDTO);
 
                 if (updatedVetrina == null)
                 {

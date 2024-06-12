@@ -1,5 +1,6 @@
 ﻿using NuovaAPI.DataLayer.Entities;
 using Microsoft.EntityFrameworkCore;
+using NuovaAPI.Commons.DTO;
 
 namespace NuovaAPI.DataLayer.Manager
 {
@@ -30,26 +31,58 @@ namespace NuovaAPI.DataLayer.Manager
 
         public async Task<ICollection<Prodotto>> GetProdotti()
         {
-            return await _appDbContext.Prodotti.ToListAsync();
+            try
+            {
+                return await _appDbContext.Prodotti.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Errore durante il recupero dei prodotti dal database: {ex.Message}");
+            }
         }
 
         public async Task<Prodotto> GetIdProdotto(int id)
         {
-            return _appDbContext.Prodotti.Where(x => x.Id == id).SingleOrDefault();
+            try
+            {
+                return _appDbContext.Prodotti.Where(x => x.Id == id).SingleOrDefault();
+            }
+
+            catch(Exception ex)
+            {
+                throw new Exception($"Errore durante il recupero del prodotto dal database: {ex.Message}");
+            }
         }
 
-        public async Task<Prodotto> ModificaProdotto(int id, Prodotto prodotto)
+        public async Task<Prodotto> ModificaProdotto(int id, ProdottoDTO prodottoDTO)
         {
-            var prodottoDaModificare = await _appDbContext.Prodotti.FindAsync(prodotto.Id);
+            var prodottoDaModificare = await _appDbContext.Prodotti.FindAsync(id);
 
-            if(prodottoDaModificare == null)
+            if (prodottoDaModificare == null)
             {
                 throw new Exception("Prodotto non trovato");
             }
 
-            prodottoDaModificare.NomeProdotto = prodotto.NomeProdotto;
-            prodottoDaModificare.Prezzo = prodotto.Prezzo;
-            prodottoDaModificare.IdVetrina = prodotto.IdVetrina;
+            if (prodottoDTO.NomeProdotto != null)
+            {
+                prodottoDaModificare.NomeProdotto = prodottoDTO.NomeProdotto;
+            }
+            if (prodottoDTO.Prezzo != null)
+            {
+                prodottoDaModificare.Prezzo = (float)prodottoDTO.Prezzo;
+            }
+            if (prodottoDTO.Quantita != null)
+            {
+                prodottoDaModificare.Quantita = (int)prodottoDTO.Quantita;
+            }
+            if (prodottoDTO.IdVetrina != null)
+            {
+                prodottoDaModificare.IdVetrina = prodottoDTO.IdVetrina;
+            }
+            if (prodottoDTO.IdOrdine != null)
+            {
+                prodottoDaModificare.IdOrdine = prodottoDTO.IdOrdine;
+            }
 
             await _appDbContext.SaveChangesAsync();
             return prodottoDaModificare;

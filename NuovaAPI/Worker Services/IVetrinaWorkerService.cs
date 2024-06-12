@@ -9,7 +9,7 @@ namespace NuovaAPI.Worker_Services
         Task AddVetrina(VetrinaDTO vetrinaDTO);
         Task<ICollection<Vetrina>> GetVetrina();
         Task<Vetrina> GetVetrinaId(int id);
-        Task<Vetrina> PutVetrina(int id, Vetrina vetrina);
+        Task<Vetrina> PutVetrina(int id, VetrinaDTO vetrinaDTO);
         Task DeleteVetrina(int id);
     }
 }

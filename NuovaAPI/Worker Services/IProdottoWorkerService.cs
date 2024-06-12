@@ -9,7 +9,7 @@ namespace NuovaAPI.Worker_Services
         Task AddProduct(ProdottoDTO prodottoDTO);
         Task<ICollection<Prodotto>> GetProduct();
         Task<Prodotto> GetProductId(int id);
-        Task<Prodotto> PutProduct(int id, Prodotto prodotto);
+        Task<Prodotto> PutProduct(int id, ProdottoDTO prodottoDTO);
         Task DeleteProduct(int id);
     }
 }

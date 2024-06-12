@@ -8,10 +8,8 @@ namespace NuovaAPI.Commons.DTO
 {
     public class ClienteDTO
     {
-        public int Id { get; set; }
-        public string Nome { get; set; }
-        public string Cognome { get; set; }
-        public DateTime DataDiNascita { get; set; }
-        public float Spesa { get; set; }
+        public string? Nome { get; set; }
+        public string? Cognome { get; set; }
+        public DateTime? DataDiNascita { get; set; }
     }
 }

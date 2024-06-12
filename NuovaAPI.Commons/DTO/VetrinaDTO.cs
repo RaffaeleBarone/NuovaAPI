@@ -8,6 +8,6 @@ namespace NuovaAPI.Commons.DTO
 {
     public class VetrinaDTO
     {
-        public int Id { get; set; }
+        public int? CodiceVetrina {  get; set; } 
     }
 }

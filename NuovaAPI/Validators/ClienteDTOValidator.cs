@@ -8,8 +8,8 @@ namespace NuovaAPI.Validators
     {
         public ClienteDTOValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().NotNull()
-                .WithMessage("L'ID del cliente è obbligatorio!");
+            //RuleFor(x => x.Nome).NotEmpty().NotNull()
+            //    .WithMessage("Il nome del cliente è obbligatorio!");
         }
 
     }

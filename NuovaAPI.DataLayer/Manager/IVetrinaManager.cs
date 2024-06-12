@@ -1,4 +1,5 @@
 ﻿using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.Commons.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace NuovaAPI.DataLayer.Manager
         Task<ICollection<Vetrina>> GetVetrine();
         Task<Vetrina> GetIdVetrina(int id);
         Task RemoveVetrina(int id);
-        Task<Vetrina> ModificaVetrina(int id, Vetrina vetrina);
+        Task<Vetrina> ModificaVetrina(int id, VetrinaDTO vetrinaDTO);
     }
 }

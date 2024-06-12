@@ -44,9 +44,9 @@ namespace NuovaAPI.Worker_Services
             return await _clienteManager.GetIdCliente(id);
         }
 
-        public async Task<Cliente> PutCliente(int id, Cliente cliente)
+        public async Task<Cliente> PutCliente(int id, ClienteDTO clienteDTO)
         {
-            return await _clienteManager.ModificaCliente(id, cliente);
+            return await _clienteManager.ModificaCliente(id, clienteDTO);
         }
 
         public async Task DeleteCliente(int id)

@@ -8,10 +8,14 @@ namespace NuovaAPI.DataLayer.Entities
 {
     public class Cliente
     {
+        public Cliente()
+        {
+            Ordini = new List<Ordini>();
+        }
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Cognome { get; set; }
         public DateTime DataDiNascita { get; set; }
-        public virtual ICollection<Ordini> Ordini { get; set; }
+        public virtual ICollection<Ordini>? Ordini { get; set; }
     }
 }

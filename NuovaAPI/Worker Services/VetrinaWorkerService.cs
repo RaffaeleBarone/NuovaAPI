@@ -16,7 +16,7 @@ namespace NuovaAPI.Worker_Services
         public Vetrina MapToVetrina(VetrinaDTO vetrinaDTO)
         {
             var vetrina = new Vetrina();
-            vetrina.Id = vetrinaDTO.Id;
+            vetrina.CodiceVetrina = (int)vetrinaDTO.CodiceVetrina;
             return vetrina;
         }
 
@@ -36,9 +36,9 @@ namespace NuovaAPI.Worker_Services
             return await _vetrinaManager.GetIdVetrina(id);
         }
 
-        public async Task<Vetrina> PutVetrina(int id, Vetrina vetrina)
+        public async Task<Vetrina> PutVetrina(int id, VetrinaDTO vetrinaDTO)
         {
-            return await _vetrinaManager.ModificaVetrina(id, vetrina);
+            return await _vetrinaManager.ModificaVetrina(id, vetrinaDTO);
         }
 
         public async Task DeleteVetrina(int id)

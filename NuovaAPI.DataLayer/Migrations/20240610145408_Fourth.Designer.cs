@@ -12,8 +12,8 @@ using NuovaAPI.DataLayer;
 namespace NuovaAPI.DataLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240604131248_Init")]
-    partial class Init
+    [Migration("20240610145408_Fourth")]
+    partial class Fourth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,9 +70,15 @@ namespace NuovaAPI.DataLayer.Migrations
             modelBuilder.Entity("NuovaAPI.DataLayer.Entities.Prodotto", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("IdVetrina")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("IdOrdine")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdVetrina")
                         .HasColumnType("int");
 
                     b.Property<string>("NomeProdotto")
@@ -87,6 +93,8 @@ namespace NuovaAPI.DataLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdOrdine");
+
                     b.HasIndex("IdVetrina");
 
                     b.ToTable("Prodotto", (string)null);
@@ -100,7 +108,13 @@ namespace NuovaAPI.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CodiceVetrina")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CodiceVetrina")
+                        .IsUnique();
 
                     b.ToTable("Vetrina", (string)null);
                 });
@@ -118,17 +132,15 @@ namespace NuovaAPI.DataLayer.Migrations
 
             modelBuilder.Entity("NuovaAPI.DataLayer.Entities.Prodotto", b =>
                 {
-                    b.HasOne("NuovaAPI.DataLayer.Entities.Ordini", null)
+                    b.HasOne("NuovaAPI.DataLayer.Entities.Ordini", "Ordini")
                         .WithMany("ProdottiAcquistati")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdOrdine");
 
                     b.HasOne("NuovaAPI.DataLayer.Entities.Vetrina", "Vetrina")
                         .WithMany("ProdottiInVetrina")
-                        .HasForeignKey("IdVetrina")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdVetrina");
+
+                    b.Navigation("Ordini");
 
                     b.Navigation("Vetrina");
                 });

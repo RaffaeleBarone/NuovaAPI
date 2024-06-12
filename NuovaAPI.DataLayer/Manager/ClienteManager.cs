@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
-using System.Data.Entity;
 
 namespace NuovaAPI.DataLayer.Manager
 {
@@ -20,37 +20,36 @@ namespace NuovaAPI.DataLayer.Manager
 
         public async Task RemoveCliente(int id)
         {
-            //using (var dbContextTransaction = _appDbContext.Database.BeginTransaction())
-            //{
-            //    try
-            //    {
-            //        var clienteDaRimuovere = _appDbContext.Clienti.Include(c => c.Id).SingleOrDefault(c => c.Id == id);
+            using (var dbContextTransaction = _appDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var clienteDaRimuovere = _appDbContext.Clienti.SingleOrDefault(c => c.Id == id);
 
-            //        if (clienteDaRimuovere != null)
-            //        {
-            //            _appDbContext.Clienti.RemoveRange((IEnumerable<Cliente>)clienteDaRimuovere);
-            //            _appDbContext.Clienti.Remove(clienteDaRimuovere);
+                    if (clienteDaRimuovere != null)
+                    {
+                        _appDbContext.Clienti.Remove(clienteDaRimuovere);
 
-            //            using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-            //            ILogger logger = factory.CreateLogger("Program");
-            //            logger.LogInformation("Modifiche avvenute!");
+                        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+                        ILogger logger = factory.CreateLogger("Program");
+                        logger.LogInformation("Modifiche avvenute!");
 
-            //            await _appDbContext.SaveChangesAsync();
-            //            dbContextTransaction.Commit();
-            //        }
-            //    }
+                        await _appDbContext.SaveChangesAsync();
+                        dbContextTransaction.Commit();
+                    }
+                }
 
-            //    catch (Exception)
-            //    {
-            //        dbContextTransaction.Rollback();
-            //    }
+                catch (Exception)
+                {
+                    dbContextTransaction.Rollback();
+                }
 
-        //    }
+            }
         }
 
         public async Task<ICollection<Cliente>> GetClienti()
         {
-            return await _appDbContext.Clienti.ToListAsync();
+            return _appDbContext.Clienti.ToList();
         }
 
         public async Task<Cliente> GetIdCliente(int id)
@@ -58,18 +57,29 @@ namespace NuovaAPI.DataLayer.Manager
             return _appDbContext.Clienti.Where(x => x.Id == id).SingleOrDefault();
         }
 
-        public async Task<Cliente> ModificaCliente(int id, Cliente cliente)
+        public async Task<Cliente> ModificaCliente(int id, ClienteDTO clienteDTO)
         {
-            var clienteDaModificare = await _appDbContext.Clienti.FindAsync(cliente.Id);
+            var clienteDaModificare = await _appDbContext.Clienti.FindAsync(id);
 
             if (clienteDaModificare == null)
             {
                 throw new Exception("Cliente non trovato");
             }
 
-            clienteDaModificare.Nome = cliente.Nome;
-            clienteDaModificare.Cognome = cliente.Cognome;
+            if (clienteDTO.Nome != null)
+            {
+                clienteDaModificare.Nome = clienteDTO.Nome;
+            }
 
+            if (clienteDTO.Cognome != null)
+            {
+                clienteDaModificare.Cognome = clienteDTO.Cognome;
+            }
+
+            if (clienteDTO.DataDiNascita != null)
+            {
+                clienteDaModificare.DataDiNascita = (DateTime)clienteDTO.DataDiNascita;
+            }
             await _appDbContext.SaveChangesAsync();
             return clienteDaModificare;
         }

@@ -1,4 +1,5 @@
-﻿using NuovaAPI.DataLayer.Entities;
+﻿using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace NuovaAPI.DataLayer.Manager
         Task AddAcquisto(Ordini acquisto);
         Task<ICollection<Ordini>> GetAcquisti();
         Task<Ordini> GetIdAcquisto(int id);
+        Task<Ordini> ModificaOrdine(int id, OrdiniDTO ordiniDTO);
+        Task RemoveVetrina(int id);
     }
 }

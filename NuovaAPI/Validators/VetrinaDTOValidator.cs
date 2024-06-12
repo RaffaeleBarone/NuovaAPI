@@ -8,8 +8,8 @@ namespace NuovaAPI.Validators
     {
         public VetrinaDTOValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().NotNull()
-                .WithMessage("L'ID della vetrina è obbligatorio!");
+            RuleFor(x => x.CodiceVetrina).NotEmpty().NotNull()
+                .WithMessage("Il codice della vetrina è obbligatorio!");
         }
     }
 }

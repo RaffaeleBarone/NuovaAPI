@@ -25,14 +25,35 @@ namespace NuovaAPI.Controllers
         [HttpGet]
         public async Task<IResult> GetClienti()
         {
-            var clienti = await _clienteWorkerService.GetCliente();
-            return Results.Ok(clienti);
+            try
+            {
+                var clienti = await _clienteWorkerService.GetCliente();
+                return Results.Ok(clienti);
+            }
+
+            catch(Exception ex)
+            {
+                return Results.Problem($"Errore durante il recupero dei clienti: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IResult> GetById([FromRoute] int id)
         {
-            return Results.Ok(await _clienteWorkerService.GetClienteId(id));
+            //return Results.Ok(await _clienteWorkerService.GetClienteId(id));
+            try
+            {
+                var cliente = await _clienteWorkerService.GetClienteId(id);
+                if (cliente == null)
+                {
+                    return Results.NotFound($"Cliente con ID {id} non trovato.");
+                }
+                return Results.Ok(cliente);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem($"Errore durante il recupero del cliente: {ex.Message}");
+            }
         }
 
         [HttpPost]
@@ -54,9 +75,9 @@ namespace NuovaAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IResult> PutCliente(int id, Cliente cliente)
+        public async Task<IResult> PutCliente(int id, ClienteDTO clienteDTO)
         {
-            var validationResult = _clienteValidator.Validate(cliente);
+            var validationResult = _clienteDTOValidator.Validate(clienteDTO);
 
             if (!validationResult.IsValid)
             {
@@ -65,7 +86,7 @@ namespace NuovaAPI.Controllers
 
             try
             {
-                var updatedCliente = await _clienteWorkerService.PutCliente(id, cliente);
+                var updatedCliente = await _clienteWorkerService.PutCliente(id, clienteDTO);
 
                 if (updatedCliente == null)
                 {
@@ -76,7 +97,7 @@ namespace NuovaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return (IResult)StatusCode(500, $"Internal server error: {ex}");
+                return Results.Problem($"Internal server error: {ex}");
             }
         }
 

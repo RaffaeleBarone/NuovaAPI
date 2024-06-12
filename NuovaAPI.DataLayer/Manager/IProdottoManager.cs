@@ -1,4 +1,5 @@
 ﻿using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.Commons.DTO; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace NuovaAPI.DataLayer.Manager
         public Task RemoveProdotto(int id);
         public Task<ICollection<Prodotto>> GetProdotti();
         public Task<Prodotto> GetIdProdotto(int id);
-        public Task<Prodotto> ModificaProdotto(int id, Prodotto prodotto);
+        public Task<Prodotto> ModificaProdotto(int id, ProdottoDTO prodottoDTO);
     }
 }

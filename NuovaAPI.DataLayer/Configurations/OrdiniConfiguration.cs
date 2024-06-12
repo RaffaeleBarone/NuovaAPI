@@ -14,9 +14,10 @@ namespace NuovaAPI.DataLayer.Configurations
                 .WithMany(c => c.Ordini)
                 .HasForeignKey(a => a.ClienteId);
 
-            builder.HasMany(x => x.ProdottiAcquistati)
-                .WithOne()
-                .HasForeignKey(x => x.Id);
+            builder.HasMany(o => o.ProdottiAcquistati)
+                .WithOne(x => x.Ordini)
+                .HasForeignKey(x => x.IdOrdine);
+
         }
     }
 }

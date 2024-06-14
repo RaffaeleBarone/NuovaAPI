@@ -32,6 +32,7 @@ namespace NuovaAPI.DataLayer
         public DbSet<Vetrina> Vetrine { get; set; }
         public DbSet<Cliente> Clienti { get; set; }
         public DbSet<Ordini> Ordini { get; set; }
+        public DbSet<OrdineProdotto> OrdiniProdotti { get; set; }
 
         public AppDbContext()
         {

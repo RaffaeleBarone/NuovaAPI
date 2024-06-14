@@ -17,6 +17,7 @@ namespace NuovaAPI.Worker_Services
         {
             var ordine = new Ordini();
             ordine.CodiceOrdine = ordiniDTO.CodiceOrdine;
+            ordine.ClienteId = ordiniDTO.ClienteId;
             return ordine;
         }
 

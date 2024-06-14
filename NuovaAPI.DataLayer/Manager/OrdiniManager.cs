@@ -21,12 +21,14 @@ namespace NuovaAPI.DataLayer.Manager
 
         public async Task<ICollection<Ordini>> GetAcquisti()
         {
-            return _appDbContext.Ordini.Include(o => o.ProdottiAcquistati).ToList();
+            //return _appDbContext.Ordini.Include(o => o.ProdottiAcquistati).ToList();
+            return _appDbContext.Ordini.ToList();
         }
 
         public async Task<Ordini> GetIdAcquisto(int id)
         {
-            return _appDbContext.Ordini.Where(x => x.Id == id).Include(o => o.ProdottiAcquistati).SingleOrDefault();
+            //return _appDbContext.Ordini.Where(x => x.Id == id).Include(o => o.ProdottiAcquistati).SingleOrDefault();
+            return await _appDbContext.Ordini.SingleOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Ordini> ModificaOrdine(int id, OrdiniDTO ordiniDTO)

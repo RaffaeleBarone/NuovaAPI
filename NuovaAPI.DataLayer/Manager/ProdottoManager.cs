@@ -73,15 +73,11 @@ namespace NuovaAPI.DataLayer.Manager
             }
             if (prodottoDTO.Quantita != null)
             {
-                prodottoDaModificare.Quantita = (int)prodottoDTO.Quantita;
+                prodottoDaModificare.QuantitaDisponibile = (int)prodottoDTO.Quantita;
             }
             if (prodottoDTO.IdVetrina != null)
             {
                 prodottoDaModificare.IdVetrina = prodottoDTO.IdVetrina;
-            }
-            if (prodottoDTO.IdOrdine != null)
-            {
-                prodottoDaModificare.IdOrdine = prodottoDTO.IdOrdine;
             }
 
             await _appDbContext.SaveChangesAsync();

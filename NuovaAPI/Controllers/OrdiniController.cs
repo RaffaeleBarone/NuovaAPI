@@ -21,7 +21,7 @@ namespace NuovaAPI.Controllers
         [HttpGet]
         public async Task<IResult> GetOrdini(int id)
         {
-            var ordine = await _ordiniWorkerService.GetOrdini();
+            var ordine = _ordiniWorkerService.GetOrdini();
             return Results.Ok(ordine);
         }
 

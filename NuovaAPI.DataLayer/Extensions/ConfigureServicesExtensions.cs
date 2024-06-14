@@ -16,6 +16,7 @@ namespace NuovaAPI.DataLayer.Extensions
             services.AddScoped<IProdottoManager, ProdottoManager>();
             services.AddScoped<IClienteManager, ClienteManager>();
             services.AddScoped<IOrdiniManager, OrdiniManager>();
+            services.AddScoped<IOrdineProdottoManager, OrdineProdottoManager>();
             return services;
         }
     }

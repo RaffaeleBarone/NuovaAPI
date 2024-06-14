@@ -22,8 +22,8 @@ namespace NuovaAPI.Worker_Services
             prodotto.NomeProdotto = prodottoDTO.NomeProdotto;
             prodotto.Prezzo = (float)prodottoDTO.Prezzo;
             prodotto.IdVetrina = prodottoDTO.IdVetrina;
-            prodotto.Quantita = (int)prodottoDTO.Quantita;
-            prodotto.IdOrdine = prodottoDTO.IdOrdine;
+            prodotto.QuantitaDisponibile = (int)prodottoDTO.Quantita;
+            //prodotto.IdOrdine = prodottoDTO.IdOrdine;
 
             return prodotto;
         }

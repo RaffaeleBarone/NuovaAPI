@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
+using System.Data.Entity;
 
 namespace NuovaAPI.DataLayer.Manager
 {
@@ -54,7 +55,9 @@ namespace NuovaAPI.DataLayer.Manager
 
         public async Task<Cliente> GetIdCliente(int id)
         {
-            return _appDbContext.Clienti.Where(x => x.Id == id).SingleOrDefault();
+            return _appDbContext.Clienti.Where(x => x.Id == id)
+                .Include(c => c.Ordini)
+                .SingleOrDefault();
         }
 
         public async Task<Cliente> ModificaCliente(int id, ClienteDTO clienteDTO)

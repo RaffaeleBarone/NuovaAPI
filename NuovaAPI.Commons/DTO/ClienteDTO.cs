@@ -11,5 +11,6 @@ namespace NuovaAPI.Commons.DTO
         public string? Nome { get; set; }
         public string? Cognome { get; set; }
         public DateTime? DataDiNascita { get; set; }
+        public ICollection<OrdiniDTO>? Ordini { get; set; }
     }
 }

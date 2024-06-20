@@ -26,7 +26,7 @@ namespace NuovaAPI.Worker_Services
             await _vetrinaManager.AddVetrina(vetrina);
         }
 
-        public async Task<ICollection<Vetrina>> GetVetrina()
+        public async Task<IEnumerable<Vetrina>> GetVetrina()
         {
             return await _vetrinaManager.GetVetrine();
         }

@@ -11,7 +11,7 @@ namespace NuovaAPI.DataLayer.Manager
     public interface IOrdineProdottoManager
     {
         Task AddOrdineProdotto(OrdineProdotto ordineProdotto);
-        Task<ICollection<OrdineProdotto>> GetOrdiniProdotti(int idOrdine);
+        Task<IEnumerable<OrdineProdotto>> GetOrdiniProdotti(int idOrdine);
         Task<OrdineProdotto> GetOrdineProdotto(int idOrdine, int idProdotto);
         Task<OrdineProdotto> ModificaOrdineProdotto(int idOrdine, int idProdotto, OrdineProdottoDTO ordineProdottoDTO);
         Task RemoveOrdineProdotto(int idOrdine, int idProdotto);

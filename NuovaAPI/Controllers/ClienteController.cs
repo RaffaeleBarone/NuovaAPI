@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace NuovaAPI.Controllers
 {
@@ -14,6 +16,7 @@ namespace NuovaAPI.Controllers
         private readonly IClienteWorkerService _clienteWorkerService;
         private readonly IValidator<Cliente> _clienteValidator;
         private readonly IValidator<ClienteDTO> _clienteDTOValidator;
+
         public ClienteController(IClienteWorkerService clienteWorkerService, IValidator<Cliente> clienteValidator, IValidator<ClienteDTO> clienteDTOValidator)
         {
             _clienteWorkerService = clienteWorkerService;
@@ -28,6 +31,7 @@ namespace NuovaAPI.Controllers
             try
             {
                 var clienti = await _clienteWorkerService.GetCliente();
+
                 return Results.Ok(clienti);
             }
 
@@ -44,6 +48,7 @@ namespace NuovaAPI.Controllers
             try
             {
                 var cliente = await _clienteWorkerService.GetClienteId(id);
+
                 if (cliente == null)
                 {
                     return Results.NotFound($"Cliente con ID {id} non trovato.");
@@ -71,6 +76,7 @@ namespace NuovaAPI.Controllers
             }
 
             await _clienteWorkerService.AddCliente(clienteDTO);
+            
             return Results.Ok();
         }
 
@@ -104,13 +110,13 @@ namespace NuovaAPI.Controllers
         [HttpDelete]
         public async Task<IResult> DeleteCliente(int id)
         {
-            var clienteDaRimuovere = await _clienteWorkerService.GetClienteId(id);
+            var clienteDaRimuovere = _clienteWorkerService.GetClienteId(id);
             if (clienteDaRimuovere == null)
             {
                 return Results.NotFound();
             }
 
-            await _clienteWorkerService.DeleteCliente(id);
+            _clienteWorkerService.DeleteCliente(id);
             return Results.NoContent();
         }
     }

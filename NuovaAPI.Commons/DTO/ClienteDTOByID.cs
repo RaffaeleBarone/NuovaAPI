@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace NuovaAPI.Commons.DTO
 {
-    public class ClienteDTO
+    public class ClienteDTOByID
     {
         public string? Nome { get; set; }
         public string? Cognome { get; set; }
         public DateTime? DataDiNascita { get; set; }
-        public IEnumerable<OrdiniDTO>? Ordini { get; set; }
     }
 }

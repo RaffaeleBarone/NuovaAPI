@@ -1,35 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.DataLayer.Infrastructure;
 
 namespace NuovaAPI.DataLayer.Manager
 {
     public class OrdineProdottoManager : IOrdineProdottoManager
     {
-        private readonly AppDbContext _appDbContext;
-        public OrdineProdottoManager(AppDbContext appDbContext)
+    
+        private readonly IUnitOfWork _unitOfWork;
+        public OrdineProdottoManager(IUnitOfWork unitOfWork)
         {
-            _appDbContext = appDbContext;
+
+            _unitOfWork = unitOfWork;
         }
 
         public async Task AddOrdineProdotto(OrdineProdotto ordineProdotto)
         {
-            _appDbContext.OrdiniProdotti.Add(ordineProdotto);
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.OrdineProdottoRepository.Add(ordineProdotto);
+            _unitOfWork.Save();
         }
 
-        public async Task<ICollection<OrdineProdotto>> GetOrdiniProdotti(int idOrdine)
+        public async Task<IEnumerable<OrdineProdotto>> GetOrdiniProdotti(int idOrdine)
         {
-            return await _appDbContext.OrdiniProdotti
+            var ordiniProdotti =  await _unitOfWork.OrdineProdottoRepository.Get(null)
         .Include(op => op.Prodotto)
         .ToListAsync();
+            return ordiniProdotti;
         }
 
         public async Task<OrdineProdotto> GetOrdineProdotto(int idOrdine, int idProdotto)
         {
-            return await _appDbContext.OrdiniProdotti
-                .Where(op => op.IdOrdine == idOrdine && op.IdProdotto == idProdotto)
-                .SingleOrDefaultAsync();
+            var ordineProdotto = await _unitOfWork.OrdineProdottoRepository
+        .Get(op => op.IdOrdine == idOrdine && op.IdProdotto == idProdotto)
+        .SingleOrDefaultAsync();
+            return ordineProdotto;
         }
 
         public async Task<OrdineProdotto> ModificaOrdineProdotto(int idOrdine, int idProdotto, OrdineProdottoDTO ordineProdottoDTO)
@@ -46,7 +51,7 @@ namespace NuovaAPI.DataLayer.Manager
                 ordineProdottoDaModificare.QuantitaAcquistata = ordineProdottoDTO.QuantitaAcquistata;
             }
 
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.Save();
             return ordineProdottoDaModificare;
         }
 
@@ -56,8 +61,8 @@ namespace NuovaAPI.DataLayer.Manager
 
             if (ordineProdottoDaRimuovere != null)
             {
-                _appDbContext.OrdiniProdotti.Remove(ordineProdottoDaRimuovere);
-                await _appDbContext.SaveChangesAsync();
+                _unitOfWork.OrdineProdottoRepository.Delete(ordineProdottoDaRimuovere);
+                _unitOfWork.Save();
             }
         }
     }

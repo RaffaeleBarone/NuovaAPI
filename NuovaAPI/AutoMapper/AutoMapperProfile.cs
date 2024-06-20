@@ -10,7 +10,6 @@ namespace NuovaAPI.AutoMapper
         {
             CreateMap<ClienteDTO, Cliente>(); 
             //CreateMap<ClienteDTO, Cliente>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Cognome));    MAPPATURA ATTRIBUTI CON NOME DIVERSO, COMMENTATO PERCHÈ ORA NON SERVE
-            CreateMap<ClienteDTO, Cliente>().ForMember(dest => dest.Ordini, opt => opt.MapFrom(src => src.Ordini));
             CreateMap<OrdineProdottoDTO, OrdineProdotto>();
         }
     }

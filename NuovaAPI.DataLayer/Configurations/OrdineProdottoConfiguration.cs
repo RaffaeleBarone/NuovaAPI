@@ -14,13 +14,14 @@ namespace NuovaAPI.DataLayer.Configurations
         public void Configure(EntityTypeBuilder<OrdineProdotto> builder)
         {
             builder.HasKey(op => new { op.IdOrdine, op.IdProdotto });
+
             builder.HasOne(op => op.Ordine)
                 .WithMany(o => o.ProdottiAcquistati)
                 .HasForeignKey(op => op.IdOrdine);
 
             builder.HasOne(op => op.Prodotto)
                 .WithMany(p => p.ProdottiAcquistati)
-                .HasForeignKey(op => op.IdProdotto);
+                .HasForeignKey(op => op.IdProdotto);                
         }
     }
 }

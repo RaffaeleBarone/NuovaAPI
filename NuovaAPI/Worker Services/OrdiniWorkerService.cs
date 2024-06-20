@@ -17,7 +17,6 @@ namespace NuovaAPI.Worker_Services
         {
             var ordine = new Ordini();
             ordine.CodiceOrdine = ordiniDTO.CodiceOrdine;
-            ordine.ClienteId = ordiniDTO.ClienteId;
             return ordine;
         }
 
@@ -27,7 +26,7 @@ namespace NuovaAPI.Worker_Services
             await _ordiniManager.AddAcquisto(ordine);
         }
 
-        public async Task<ICollection<Ordini>> GetOrdini()
+        public async Task<IEnumerable<Ordini>> GetOrdini()
         {
             return await _ordiniManager.GetAcquisti();
         }

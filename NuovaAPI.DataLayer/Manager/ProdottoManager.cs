@@ -1,39 +1,41 @@
 ﻿using NuovaAPI.DataLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer.Infrastructure;
 
 namespace NuovaAPI.DataLayer.Manager
 {
     public class ProdottoManager : IProdottoManager
     {
-        private readonly AppDbContext _appDbContext;
-        public ProdottoManager(AppDbContext appDbContext)
+      
+        private readonly IUnitOfWork _unitOfWork;
+        public ProdottoManager( IUnitOfWork unitOfWork)
         {
-            _appDbContext = appDbContext;
+       _unitOfWork = unitOfWork;
         }
 
         public async Task AddProdotto(Prodotto prodotto)
         {
             //var prodotto = new Prodotto { NomeProdotto = nome, Prezzo = prezzo, IdVetrina = idVetrina };
-            _appDbContext.Prodotti.Add(prodotto);
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.ProdottoRepository.Add(prodotto);
+            _unitOfWork.Save();
         }
 
         public async Task RemoveProdotto(int id)
         {
-            var prodottoDaRimuovere = await _appDbContext.Prodotti.FirstOrDefaultAsync(x => x.Id == id);
+            var prodottoDaRimuovere = await _unitOfWork.ProdottoRepository.GetById(id);
             if (prodottoDaRimuovere != null)
             {
-                _appDbContext.Prodotti.Remove(prodottoDaRimuovere);
-                await _appDbContext.SaveChangesAsync();
+                _unitOfWork.ProdottoRepository.Delete(prodottoDaRimuovere);
+                _unitOfWork.Save();
             }
         }
 
-        public async Task<ICollection<Prodotto>> GetProdotti()
+        public async Task<IQueryable<Prodotto>> GetProdotti()
         {
             try
             {
-                return await _appDbContext.Prodotti.ToListAsync();
+                return _unitOfWork.ProdottoRepository.Get(null);
             }
             catch (Exception ex)
             {
@@ -45,7 +47,11 @@ namespace NuovaAPI.DataLayer.Manager
         {
             try
             {
-                return _appDbContext.Prodotti.Where(x => x.Id == id).SingleOrDefault();
+                //return _unitOfWork.ProdottoRepository
+                //    .Where(x => x.Id == id)
+                //    .SingleOrDefault();
+                var prodotto = await _unitOfWork.ProdottoRepository.GetById(id);
+                return prodotto;
             }
 
             catch(Exception ex)
@@ -56,7 +62,7 @@ namespace NuovaAPI.DataLayer.Manager
 
         public async Task<Prodotto> ModificaProdotto(int id, ProdottoDTO prodottoDTO)
         {
-            var prodottoDaModificare = await _appDbContext.Prodotti.FindAsync(id);
+            var prodottoDaModificare = await _unitOfWork.ProdottoRepository.GetById(id);
 
             if (prodottoDaModificare == null)
             {
@@ -80,7 +86,7 @@ namespace NuovaAPI.DataLayer.Manager
                 prodottoDaModificare.IdVetrina = prodottoDTO.IdVetrina;
             }
 
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.Save();
             return prodottoDaModificare;
         }
     }

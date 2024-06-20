@@ -28,7 +28,7 @@ namespace NuovaAPI.Worker_Services
             await _ordineProdottoManager.AddOrdineProdotto(ordineProdotto);
         }
 
-        public async Task<ICollection<OrdineProdotto>> GetOrdiniProdotti(int idOrdine)
+        public async Task<IEnumerable<OrdineProdotto>> GetOrdiniProdotti(int idOrdine)
         {
             return await _ordineProdottoManager.GetOrdiniProdotti(idOrdine);
         }

@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer;
+using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace NuovaAPI.Controllers
 {
@@ -23,7 +26,13 @@ namespace NuovaAPI.Controllers
         public async Task<IResult> GetOrdiniProdotti(int idOrdine)
         {
             var ordiniProdotti = await _ordineProdottoWorkerService.GetOrdiniProdotti(idOrdine);
-            return Results.Ok(ordiniProdotti);
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string json = JsonSerializer.Serialize(ordiniProdotti, options);
+
+            return Results.Ok(json);
         }
 
         [HttpGet("{idOrdine}/{idProdotto}")]

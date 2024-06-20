@@ -11,7 +11,7 @@ namespace NuovaAPI.DataLayer.Manager
     public interface IVetrinaManager
     {
         Task AddVetrina(Vetrina vetrina);
-        Task<ICollection<Vetrina>> GetVetrine();
+        Task<IEnumerable<Vetrina>> GetVetrine();
         Task<Vetrina> GetIdVetrina(int id);
         Task RemoveVetrina(int id);
         Task<Vetrina> ModificaVetrina(int id, VetrinaDTO vetrinaDTO);

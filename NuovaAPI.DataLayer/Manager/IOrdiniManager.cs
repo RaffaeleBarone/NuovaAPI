@@ -11,7 +11,7 @@ namespace NuovaAPI.DataLayer.Manager
     public interface IOrdiniManager
     {
         Task AddAcquisto(Ordini acquisto);
-        Task<ICollection<Ordini>> GetAcquisti();
+        Task<IQueryable<Ordini>> GetAcquisti();
         Task<Ordini> GetIdAcquisto(int id);
         Task<Ordini> ModificaOrdine(int id, OrdiniDTO ordiniDTO);
         Task RemoveVetrina(int id);

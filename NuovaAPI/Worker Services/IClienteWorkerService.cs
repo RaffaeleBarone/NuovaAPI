@@ -7,8 +7,8 @@ namespace NuovaAPI.Worker_Services
     {
         Cliente MapToCliente(ClienteDTO clienteDTO);
         Task AddCliente(ClienteDTO clienteDTO);
-        Task<ICollection<Cliente>> GetCliente();
-        Task<Cliente> GetClienteId(int id);
+        Task<IEnumerable<ClienteDTO>> GetCliente();
+        Task<ClienteDTOByID> GetClienteId(int id);
         Task<Cliente> PutCliente(int id, ClienteDTO clienteDTO);
         Task DeleteCliente(int id);
     }

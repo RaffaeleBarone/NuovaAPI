@@ -1,39 +1,44 @@
 ﻿using Microsoft.Extensions.Logging;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.DataLayer.Infrastructure;
 using System.Data.Entity;
 
 namespace NuovaAPI.DataLayer.Manager
 {
     public class OrdiniManager : IOrdiniManager
     {
-        private readonly AppDbContext _appDbContext;
-        public OrdiniManager(AppDbContext appDbContext)
+   
+        private readonly IUnitOfWork _unitOfWork;
+        public OrdiniManager(IUnitOfWork unitOfWork)
         {
-            _appDbContext = appDbContext;
+         
+            _unitOfWork = unitOfWork;
         }
 
         public async Task AddAcquisto(Ordini acquisto)
         {
-            _appDbContext.Ordini.Add(acquisto);
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.OrdiniRepository.Add(acquisto);
+            _unitOfWork.Save();
         }
 
-        public async Task<ICollection<Ordini>> GetAcquisti()
+        public async Task<IQueryable<Ordini>> GetAcquisti()
         {
             //return _appDbContext.Ordini.Include(o => o.ProdottiAcquistati).ToList();
-            return _appDbContext.Ordini.ToList();
+            return _unitOfWork.OrdiniRepository.Get(null);
         }
 
         public async Task<Ordini> GetIdAcquisto(int id)
         {
             //return _appDbContext.Ordini.Where(x => x.Id == id).Include(o => o.ProdottiAcquistati).SingleOrDefault();
-            return await _appDbContext.Ordini.SingleOrDefaultAsync(x => x.Id == id);
+            return await _unitOfWork.OrdiniRepository.Get(o => o.Id == id)
+                .Include(o => o.ProdottiAcquistati)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<Ordini> ModificaOrdine(int id, OrdiniDTO ordiniDTO)
         {
-            var ordineDaModificare = await _appDbContext.Ordini.FindAsync(id);
+            var ordineDaModificare = await _unitOfWork.OrdiniRepository.GetById(id);
 
             if (ordineDaModificare == null)
             {
@@ -45,38 +50,34 @@ namespace NuovaAPI.DataLayer.Manager
                 ordineDaModificare.CodiceOrdine = ordiniDTO.CodiceOrdine;
             }
 
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.Save();
             return ordineDaModificare;
         }
 
         public async Task RemoveVetrina(int id)
         {
-            using (var dbContextTransaction = _appDbContext.Database.BeginTransaction())
+            _unitOfWork.BeginTransaction();
             {
-                try
+
+                var ordineDaRimuovere = _unitOfWork.OrdiniRepository.Delete(id);
+
+                if (ordineDaRimuovere != null)
                 {
-                    var ordineDaRimuovere = _appDbContext.Ordini.SingleOrDefault(v => v.Id == id);
+                    _unitOfWork.OrdiniRepository.Delete(ordineDaRimuovere);
 
-                    if (ordineDaRimuovere != null)
-                    {
-                        _appDbContext.Ordini.Remove(ordineDaRimuovere);
+                    using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+                    ILogger logger = factory.CreateLogger("Program");
+                    logger.LogInformation("Modifiche avvenute!");
 
-                        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-                        ILogger logger = factory.CreateLogger("Program");
-                        logger.LogInformation("Modifiche avvenute!");
-
-                        await _appDbContext.SaveChangesAsync();
-                        dbContextTransaction.Commit();
-                    }
-                }
-
-                catch (Exception)
-                {
-                    dbContextTransaction.Rollback();
+                    _unitOfWork.Save();
+                    _unitOfWork.Commit();
                 }
             }
+
+
         }
-
-
     }
+
+
 }
+

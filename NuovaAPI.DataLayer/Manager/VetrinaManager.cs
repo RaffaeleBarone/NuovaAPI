@@ -1,31 +1,45 @@
-﻿using Microsoft.Extensions.Logging;
-using NuovaAPI.DataLayer.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer.Entities;
+using NuovaAPI.DataLayer.Infrastructure;
 
 namespace NuovaAPI.DataLayer.Manager
 {
     public class VetrinaManager : IVetrinaManager
     {
-        private readonly AppDbContext _appDbContext;
-        public VetrinaManager(AppDbContext appDbContext)
+     
+        private readonly IUnitOfWork _unitOfWork;
+        public VetrinaManager(IUnitOfWork unitOfWork)
         {
-            _appDbContext = appDbContext;
+           
+            _unitOfWork = unitOfWork;
         }
         public async Task AddVetrina(Vetrina vetrina)
         {
-            _appDbContext.Vetrine.Add(vetrina);
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.VetrinaRepository.Add(vetrina);
+            _unitOfWork.Save();
         }
 
-        public async Task<ICollection<Vetrina>> GetVetrine()
+        public async Task<IEnumerable<Vetrina>> GetVetrine()
         {
-            return _appDbContext.Vetrine.Include(v => v.ProdottiInVetrina).ToList();
+            return _unitOfWork.VetrinaRepository.Get(null)
+                .Include(v => v.ProdottiInVetrina)
+                .ToList();
         }
 
         public async Task<Vetrina> GetIdVetrina(int id)
         {
-            return _appDbContext.Vetrine.Where(x => x.Id == id).Include(v => v.ProdottiInVetrina).SingleOrDefault();
+            //return await _unitOfWork.VetrinaRepository.GetById(id)
+            //    //.Where(x => x.Id == id)
+            //    .Include(v => v.ProdottiInVetrina)
+            //    .FirstOrDefault();
+
+            var vetrina = await _unitOfWork.VetrinaRepository
+                .Get(v => v.Id == id)
+                .Include(v => v.ProdottiInVetrina)
+                .SingleOrDefaultAsync();
+            return vetrina;
         }
 
         public async Task RemoveVetrina(int id)
@@ -55,38 +69,28 @@ namespace NuovaAPI.DataLayer.Manager
             //        dbContextTransaction.Rollback();
             //    }
 
-            using (var dbContextTransaction = _appDbContext.Database.BeginTransaction())
+            _unitOfWork.BeginTransaction();
             {
-                try
+
+                var vetrinaDaRimuovere = _unitOfWork.VetrinaRepository.Delete(id);
+
+                if (vetrinaDaRimuovere != null)
                 {
-                    var vetrinaDaRimuovere = _appDbContext.Vetrine.SingleOrDefault(v => v.Id == id);
+                    _unitOfWork.VetrinaRepository.Delete(vetrinaDaRimuovere);
 
-                    if (vetrinaDaRimuovere != null)
-                    {
-                        _appDbContext.Vetrine.Remove(vetrinaDaRimuovere);
+                    using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+                    ILogger logger = factory.CreateLogger("Program");
+                    logger.LogInformation("Modifiche avvenute!");
 
-                        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-                        ILogger logger = factory.CreateLogger("Program");
-                        logger.LogInformation("Modifiche avvenute!");
-
-                        await _appDbContext.SaveChangesAsync();
-                        dbContextTransaction.Commit();
-                    }
-                }
-
-                catch (Exception)
-                {
-                    dbContextTransaction.Rollback();
+                    _unitOfWork.Save();
+                    _unitOfWork.Commit();
                 }
             }
         }
 
-
-
-
         public async Task<Vetrina> ModificaVetrina(int id, VetrinaDTO vetrinaDTO)
         {
-            var vetrinaDaModificare = await _appDbContext.Vetrine.FindAsync(id);
+            var vetrinaDaModificare = await _unitOfWork.VetrinaRepository.GetById(id);
 
             if (vetrinaDaModificare == null)
             {
@@ -97,8 +101,8 @@ namespace NuovaAPI.DataLayer.Manager
             {
                 vetrinaDaModificare.CodiceVetrina = (int)vetrinaDTO.CodiceVetrina;
             }
-            
-            await _appDbContext.SaveChangesAsync();
+
+            _unitOfWork.Save();
             return vetrinaDaModificare;
         }
     }

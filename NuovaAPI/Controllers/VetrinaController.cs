@@ -4,6 +4,8 @@ using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NuovaAPI.Controllers
 {
@@ -30,7 +32,14 @@ namespace NuovaAPI.Controllers
         public async Task<IResult> GetVetrine(int id)
         {
             var vetrine = await _vetrinaWorkerService.GetVetrina();
-            return Results.Ok(vetrine);
+
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string json = JsonSerializer.Serialize(vetrine, options);
+
+            return Results.Ok(json);
         }
 
         [HttpGet("{id}")]

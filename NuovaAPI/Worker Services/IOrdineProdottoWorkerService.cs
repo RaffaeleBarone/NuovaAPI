@@ -7,7 +7,7 @@ namespace NuovaAPI.Worker_Services
     {
         OrdineProdotto MapToOrdineProdotto(OrdineProdottoDTO ordineProdottoDTO);
         Task AddOrdineProdotto(OrdineProdottoDTO ordineProdottoDTO);
-        Task<ICollection<OrdineProdotto>> GetOrdiniProdotti(int idOrdine);
+        Task<IEnumerable<OrdineProdotto>> GetOrdiniProdotti(int idOrdine);
         Task<OrdineProdotto> GetOrdineProdottoById(int idOrdine, int idProdotto);
         Task<OrdineProdotto> PutOrdineProdotto(int idOrdine, int idProdotto, OrdineProdottoDTO ordineProdottoDTO);
         Task DeleteOrdineProdotto(int idOrdine, int idProdotto);

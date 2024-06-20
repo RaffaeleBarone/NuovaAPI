@@ -2,6 +2,8 @@
 using NuovaAPI.DataLayer;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Manager;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NuovaAPI.Worker_Services
 {
@@ -36,7 +38,7 @@ namespace NuovaAPI.Worker_Services
             await _prodottoManager.AddProdotto(prodotto);
         }
 
-        public async Task<ICollection<Prodotto>> GetProduct()
+        public async Task<IEnumerable<Prodotto>> GetProduct()
         {
             try
             {

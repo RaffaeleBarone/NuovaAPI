@@ -3,6 +3,7 @@
     public class OrdiniDTO
     {
         public int CodiceOrdine { get; set; }
-        public int ClienteId { get; set; }
+        public IEnumerable<string> Prodotti { get; set; }
+        public double Costo { get; set; }
     }
 }

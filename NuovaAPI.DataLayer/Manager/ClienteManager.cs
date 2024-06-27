@@ -51,7 +51,7 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IEnumerable<ClienteDTO>> GetClienti(string nome = null, string cognome = null, string orderBy = null, bool ascending = true)
+        public async Task<IEnumerable<ClienteDTO>> GetClienti(string nome = null, string cognome = null, string orderBy = null, bool ascending = true, int pageNumber = 1, int pageSize = 10)
         {
             var query = _unitOfWork.ClienteRepository.Get(null)
                 .Include(x => x.Ordini)
@@ -91,9 +91,14 @@ namespace NuovaAPI.DataLayer.Manager
                 }
             }
 
-            var clienti = await query.ToListAsync();
+
 
             //Paginazione
+
+            var skipAmount = (pageNumber - 1) * pageSize;
+            query = query.Skip(skipAmount).Take(pageSize);
+
+            var clienti = await query.ToListAsync();
 
             var clientiDTO = clienti.Select(x => new ClienteDTO
             {

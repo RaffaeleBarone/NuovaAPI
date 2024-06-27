@@ -26,11 +26,11 @@ namespace NuovaAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IResult> GetProdotti([FromQuery] string nomeProdotto = null, [FromQuery] string orderBy = null, [FromQuery] bool ascending = true)
+        public async Task<IResult> GetProdotti([FromQuery] string nomeProdotto = null, [FromQuery] string orderBy = null, [FromQuery] bool ascending = true, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var prodotti = await _prodottoWorkerService.GetProduct(nomeProdotto, orderBy, ascending);
+                var prodotti = await _prodottoWorkerService.GetProduct(nomeProdotto, orderBy, ascending, pageNumber, pageSize);
                 return Results.Ok(prodotti);
             }
             catch (Exception ex)

@@ -31,7 +31,7 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null, string orderBy = null, bool ascending = true)
+        public async Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null, string orderBy = null, bool ascending = true, int pageNumber = 1, int pageSize = 10)
         {
             //try
             //{
@@ -73,6 +73,10 @@ namespace NuovaAPI.DataLayer.Manager
                         break;
                 }
             }
+
+            //Paginazione
+            var skipAmount = (pageNumber - 1) * pageSize;
+            query = query.Skip(skipAmount).Take(pageSize);
 
             var prodotto = await query.ToListAsync();
 

@@ -26,11 +26,11 @@ namespace NuovaAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IResult> GetClienti([FromQuery] string nome = null, [FromQuery] string cognome = null, [FromQuery] string orderBy = null, [FromQuery] bool ascending = true)
+        public async Task<IResult> GetClienti([FromQuery] string nome = null, [FromQuery] string cognome = null, [FromQuery] string orderBy = null, [FromQuery] bool ascending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var clienti = await _clienteWorkerService.GetCliente(nome, cognome, orderBy, ascending);
+                var clienti = await _clienteWorkerService.GetCliente(nome, cognome, orderBy, ascending, pageNumber, pageSize);
                 return Results.Ok(clienti);
             }
 

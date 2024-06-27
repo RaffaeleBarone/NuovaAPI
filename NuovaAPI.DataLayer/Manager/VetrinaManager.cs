@@ -8,11 +8,11 @@ namespace NuovaAPI.DataLayer.Manager
 {
     public class VetrinaManager : IVetrinaManager
     {
-     
+
         private readonly IUnitOfWork _unitOfWork;
         public VetrinaManager(IUnitOfWork unitOfWork)
         {
-           
+
             _unitOfWork = unitOfWork;
         }
         public async Task AddVetrina(Vetrina vetrina)
@@ -21,11 +21,32 @@ namespace NuovaAPI.DataLayer.Manager
             _unitOfWork.Save();
         }
 
-        public async Task<IEnumerable<Vetrina>> GetVetrine()
+        public async Task<IEnumerable<VetrinaDTO>> GetVetrine(int? codiceVetrina = null)
         {
-            return _unitOfWork.VetrinaRepository.Get(null)
-                .Include(v => v.ProdottiInVetrina)
-                .ToList();
+            //return _unitOfWork.VetrinaRepository.Get(null)
+            //    .Include(v => v.ProdottiInVetrina)
+            //    .ToList();
+
+            var query = _unitOfWork.VetrinaRepository.Get(null)
+              .Include(x => x.ProdottiInVetrina)
+              .AsQueryable();
+
+
+            //Filtri
+            if (codiceVetrina.HasValue)
+            {
+                query = query.Where(c => c.CodiceVetrina == codiceVetrina.Value);
+            }
+
+
+            var vetrine = await query.ToListAsync();
+
+            var vetrinaDTO = vetrine.Select(x => new VetrinaDTO
+            {
+                CodiceVetrina = x.CodiceVetrina
+            });
+
+            return vetrinaDTO;
         }
 
         public async Task<Vetrina> GetIdVetrina(int id)

@@ -1,17 +1,17 @@
-﻿using NuovaAPI.DataLayer.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NuovaAPI.Commons.DTO;
+using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Infrastructure;
 
 namespace NuovaAPI.DataLayer.Manager
 {
     public class ProdottoManager : IProdottoManager
     {
-      
+
         private readonly IUnitOfWork _unitOfWork;
-        public ProdottoManager( IUnitOfWork unitOfWork)
+        public ProdottoManager(IUnitOfWork unitOfWork)
         {
-       _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task AddProdotto(Prodotto prodotto)
@@ -31,16 +31,37 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IQueryable<Prodotto>> GetProdotti()
+        public async Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null)
         {
-            try
+            //try
+            //{
+            //    return _unitOfWork.ProdottoRepository.Get(null);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception($"Errore durante il recupero dei prodotti dal database: {ex.Message}");
+            //}
+
+            var query = _unitOfWork.ProdottoRepository.Get(null)
+            .AsQueryable();
+
+            //Filtri
+            if (!string.IsNullOrEmpty(nomeProdotto))
             {
-                return _unitOfWork.ProdottoRepository.Get(null);
+                query = query.Where(c => c.NomeProdotto.Contains(nomeProdotto));
             }
-            catch (Exception ex)
+
+            var prodotto = await query.ToListAsync();
+
+            var prodottoDTO = prodotto.Select(x => new ProdottoDTO
             {
-                throw new Exception($"Errore durante il recupero dei prodotti dal database: {ex.Message}");
-            }
+                NomeProdotto = x.NomeProdotto,
+                Prezzo = x.Prezzo,
+                Quantita = x.QuantitaDisponibile,
+                IdVetrina = x.IdVetrina
+            });
+
+            return prodottoDTO;
         }
 
         public async Task<Prodotto> GetIdProdotto(int id)
@@ -54,7 +75,7 @@ namespace NuovaAPI.DataLayer.Manager
                 return prodotto;
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Errore durante il recupero del prodotto dal database: {ex.Message}");
             }

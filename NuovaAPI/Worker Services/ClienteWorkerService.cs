@@ -34,10 +34,11 @@ namespace NuovaAPI.Worker_Services
             await _clienteManager.AddCliente(cliente);
         }
 
-        public async Task<IEnumerable<ClienteDTO>> GetCliente()
+        public async Task<IEnumerable<ClienteDTO>> GetCliente(string nome = null, string cognome = null)
         {
-            return await _clienteManager.GetClienti();
+            return await _clienteManager.GetClienti(nome, cognome);
         }
+
 
         public async Task<ClienteDTOByID> GetClienteId(int id)
         {

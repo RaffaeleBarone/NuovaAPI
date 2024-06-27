@@ -29,9 +29,9 @@ namespace NuovaAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IResult> GetVetrine(int id)
+        public async Task<IResult> GetVetrine([FromQuery] int? codiceVetrina = null)
         {
-            var vetrine = await _vetrinaWorkerService.GetVetrina();
+            var vetrine = await _vetrinaWorkerService.GetVetrina(codiceVetrina);
 
             var options = new JsonSerializerOptions
             {

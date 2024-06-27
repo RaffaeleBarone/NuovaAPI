@@ -38,11 +38,11 @@ namespace NuovaAPI.Worker_Services
             await _prodottoManager.AddProdotto(prodotto);
         }
 
-        public async Task<IEnumerable<Prodotto>> GetProduct()
+        public async Task<IEnumerable<ProdottoDTO>> GetProduct(string nomeProdotto = null)
         {
             try
             {
-                return await _prodottoManager.GetProdotti();
+                return await _prodottoManager.GetProdotti(nomeProdotto);
             }
             catch (Exception ex)
             {

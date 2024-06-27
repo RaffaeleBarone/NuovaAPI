@@ -26,20 +26,38 @@ namespace NuovaAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IResult> GetClienti()
+        public async Task<IResult> GetClienti([FromQuery] string nome = null, [FromQuery] string cognome = null)
         {
             try
             {
-                var clienti = await _clienteWorkerService.GetCliente();
-
+                var clienti = await _clienteWorkerService.GetCliente(nome, cognome);
                 return Results.Ok(clienti);
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Results.Problem($"Errore durante il recupero dei clienti: {ex.Message}");
             }
         }
+
+
+
+        //[HttpGet("Ordinati")]
+        //public async Task<IResult> GetClientiOrdinati()
+        //{
+        //    try
+        //    {
+        //        var clienti = await _clienteWorkerService.GetCliente();
+
+        //        return Results.Ok(clienti);
+        //    }
+
+        //    catch (Exception ex)
+        //    {
+        //        return Results.Problem($"Errore durante il recupero dei clienti: {ex.Message}");
+        //    }
+        //}
+
 
         [HttpGet("{id}")]
         public async Task<IResult> GetById([FromRoute] int id)

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Infrastructure;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NuovaAPI.DataLayer.Manager
 {
@@ -49,19 +51,30 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IEnumerable<ClienteDTO>> GetClienti()
+        public async Task<IEnumerable<ClienteDTO>> GetClienti(string nome = null, string cognome = null)
         {
-            var clienti = await _unitOfWork.ClienteRepository.Get(null)
+            var query = _unitOfWork.ClienteRepository.Get(null)
                 .Include(x => x.Ordini)
                 .ThenInclude(x => x.ProdottiAcquistati)
                 .ThenInclude(x => x.Prodotto)
-                .ToListAsync();
+                //.ToListAsync();
+                .AsQueryable();
 
             //Filtri
-        
+            if (!string.IsNullOrEmpty(nome))
+            {
+                query = query.Where(c => c.Nome.Contains(nome));
+            }
+
+            if (!string.IsNullOrEmpty(cognome))
+            {
+                query = query.Where(c => c.Cognome.Contains(cognome));
+            }
+
+            var clienti = await query.ToListAsync();
 
             //Ordine
-            
+
 
             //Paginazione
 

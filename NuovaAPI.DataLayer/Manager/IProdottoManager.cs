@@ -12,7 +12,7 @@ namespace NuovaAPI.DataLayer.Manager
     {
         public Task AddProdotto(Prodotto prodotto);
         public Task RemoveProdotto(int id);
-        public Task<IQueryable<Prodotto>> GetProdotti();
+        public Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null);
         public Task<Prodotto> GetIdProdotto(int id);
         public Task<Prodotto> ModificaProdotto(int id, ProdottoDTO prodottoDTO);
     }

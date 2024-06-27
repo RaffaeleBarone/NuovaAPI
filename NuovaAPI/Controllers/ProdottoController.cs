@@ -26,11 +26,11 @@ namespace NuovaAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IResult> GetProdotti()
+        public async Task<IResult> GetProdotti([FromQuery] string nomeProdotto = null)
         {
             try
             {
-                var prodotti = await _prodottoWorkerService.GetProduct();
+                var prodotti = await _prodottoWorkerService.GetProduct(nomeProdotto);
                 return Results.Ok(prodotti);
             }
             catch (Exception ex)

@@ -12,7 +12,7 @@ namespace NuovaAPI.DataLayer.Manager
     {
         Task AddCliente(Cliente cliente);
         Task RemoveCliente(int id);
-        Task<IEnumerable<ClienteDTO>> GetClienti();
+        Task<IEnumerable<ClienteDTO>> GetClienti(string nome, string cognome);
         Task<ClienteDTOByID> GetIdCliente(int id);
         Task<Cliente> ModificaCliente(int id, ClienteDTO clienteDTO);
     }

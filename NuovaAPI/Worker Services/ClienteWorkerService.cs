@@ -34,9 +34,9 @@ namespace NuovaAPI.Worker_Services
             await _clienteManager.AddCliente(cliente);
         }
 
-        public async Task<IEnumerable<ClienteDTO>> GetCliente(string nome = null, string cognome = null)
+        public async Task<IEnumerable<ClienteDTO>> GetCliente(string nome = null, string cognome = null, string orderBy = null, bool ascending = true)
         {
-            return await _clienteManager.GetClienti(nome, cognome);
+            return await _clienteManager.GetClienti(nome, cognome, orderBy, ascending);
         }
 
 

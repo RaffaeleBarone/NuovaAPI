@@ -31,7 +31,7 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null)
+        public async Task<IEnumerable<ProdottoDTO>> GetProdotti(string nomeProdotto = null, string orderBy = null, bool ascending = true)
         {
             //try
             //{
@@ -49,6 +49,29 @@ namespace NuovaAPI.DataLayer.Manager
             if (!string.IsNullOrEmpty(nomeProdotto))
             {
                 query = query.Where(c => c.NomeProdotto.Contains(nomeProdotto));
+            }
+
+            // Ordinamento
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                switch (orderBy.ToLower())
+                {
+                    case "nome":
+                        query = ascending ? query.OrderBy(c => c.NomeProdotto) : query.OrderByDescending(c => c.NomeProdotto);
+                        break;
+                    case "prezzo":
+                        query = ascending ? query.OrderBy(p => p.Prezzo) : query.OrderByDescending(p => p.Prezzo);
+                        break;
+                    case "quantita":
+                        query = ascending ? query.OrderBy(p => p.QuantitaDisponibile) : query.OrderByDescending(p => p.QuantitaDisponibile);
+                        break;
+                    case "idvetrina":
+                        query = ascending ? query.OrderBy(p => p.IdVetrina) : query.OrderByDescending(p => p.IdVetrina);
+                        break;
+                    default:
+                        query = query.OrderBy(p => p.NomeProdotto); 
+                        break;
+                }
             }
 
             var prodotto = await query.ToListAsync();

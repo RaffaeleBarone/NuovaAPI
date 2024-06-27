@@ -51,16 +51,15 @@ namespace NuovaAPI.DataLayer.Manager
             }
         }
 
-        public async Task<IEnumerable<ClienteDTO>> GetClienti(string nome = null, string cognome = null)
+        public async Task<IEnumerable<ClienteDTO>> GetClienti(string nome = null, string cognome = null, string orderBy = null, bool ascending = true)
         {
             var query = _unitOfWork.ClienteRepository.Get(null)
                 .Include(x => x.Ordini)
                 .ThenInclude(x => x.ProdottiAcquistati)
                 .ThenInclude(x => x.Prodotto)
-                //.ToListAsync();
                 .AsQueryable();
 
-            //Filtri
+            // Filtri
             if (!string.IsNullOrEmpty(nome))
             {
                 query = query.Where(c => c.Nome.Contains(nome));
@@ -71,10 +70,28 @@ namespace NuovaAPI.DataLayer.Manager
                 query = query.Where(c => c.Cognome.Contains(cognome));
             }
 
+
+            // Ordinamento
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                switch (orderBy.ToLower())
+                {
+                    case "nome":
+                        query = ascending ? query.OrderBy(c => c.Nome) : query.OrderByDescending(c => c.Nome);
+                        break;
+                    case "cognome":
+                        query = ascending ? query.OrderBy(c => c.Cognome) : query.OrderByDescending(c => c.Cognome);
+                        break;
+                    case "datadinascita":
+                        query = ascending ? query.OrderBy(c => c.DataDiNascita) : query.OrderByDescending(c => c.DataDiNascita);
+                        break;
+                    default:
+                        query = ascending ? query.OrderBy(c => c.Nome) : query.OrderByDescending(c => c.Nome);
+                        break;
+                }
+            }
+
             var clienti = await query.ToListAsync();
-
-            //Ordine
-
 
             //Paginazione
 

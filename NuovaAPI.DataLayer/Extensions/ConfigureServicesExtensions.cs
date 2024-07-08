@@ -22,13 +22,15 @@ namespace NuovaAPI.DataLayer.Extensions
             services.AddScoped<IRepository<Ordini>, Repository<Ordini>>();
             services.AddScoped<IRepository<Prodotto>, Repository<Prodotto>>();
             services.AddScoped<IRepository<Vetrina>, Repository<Vetrina>>();
-
+            services.AddScoped<IRepository<Taxonomy>, Repository<Taxonomy>>();
+            services.AddScoped<IRepository<Termini>, Repository<Termini>>();
 
             services.AddScoped<IVetrinaManager, VetrinaManager>();
             services.AddScoped<IProdottoManager, ProdottoManager>();
             services.AddScoped<IClienteManager, ClienteManager>();
             services.AddScoped<IOrdiniManager, OrdiniManager>();
             services.AddScoped<IOrdineProdottoManager, OrdineProdottoManager>();
+            services.AddScoped<ITaxonomyManager, TaxonomyManager>();
 
             return services;
         }

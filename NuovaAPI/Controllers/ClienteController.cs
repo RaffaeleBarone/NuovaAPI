@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.Worker_Services;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 namespace NuovaAPI.Controllers
 {
@@ -94,7 +92,7 @@ namespace NuovaAPI.Controllers
             }
 
             await _clienteWorkerService.AddCliente(clienteDTO);
-            
+
             return Results.Ok();
         }
 
@@ -136,6 +134,69 @@ namespace NuovaAPI.Controllers
 
             _clienteWorkerService.DeleteCliente(id);
             return Results.NoContent();
+        }
+
+        [HttpPost("Upload")]
+        public async Task<IResult> UploadClienti(IFormFile file)
+        {
+            //if (file == null || file.Length == 0)
+            //{
+            //    return Results.BadRequest("File inserito non valido");
+            //}
+
+            if(string.IsNullOrWhiteSpace(file.FileName))
+            {
+                return Results.BadRequest("File inserito non valido");
+            }
+
+            try
+            {
+                //var clienti = new List<ClienteDTO>();
+
+                //if (file.FileName.EndsWith(".json"))
+                //{
+                //    using (var stream = new StreamReader(file.OpenReadStream()))
+                //    {
+                //        var fileContent = await stream.ReadToEndAsync();
+                //        clienti = JsonSerializer.Deserialize<List<ClienteDTO>>(fileContent);
+                //    }
+
+                //}
+
+                //else
+                //{
+                //    return Results.BadRequest("Formato non supportato, per il momento il sistema accetta solo JSON");
+                //}
+
+                //    using var stream = new StreamReader(file.OpenReadStream());
+                //    var fileContent = await stream.ReadToEndAsync();
+
+                //    var clienti = JsonSerializer.Deserialize<List<ClienteDtoJson>>(fileContent);
+
+
+                //    if(clienti == null || clienti.Count == 0)
+                //    {
+                //        return Results.BadRequest("Il file JSON non contiene dati validi");
+                //    }
+
+                //    await _clienteWorkerService.AddOrUpdateClientiAsync(clienti);
+                //    return Results.Ok("Dati caricati con successo");
+                //}
+
+                //catch (Exception ex)
+                //{
+                //    return Results.Problem($"Errore {ex.Message}");
+
+                await _clienteWorkerService.AddOrUpdateClientiAsync(file);
+
+                return Results.Ok("Inserimento avvenuto con successo");
+            }
+
+            catch (Exception ex)
+
+            {
+                return Results.Problem($"Errore: {ex.Message}");
+            }
         }
     }
 }

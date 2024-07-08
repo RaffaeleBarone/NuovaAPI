@@ -23,6 +23,7 @@ namespace NuovaAPI.Worker_Services
             //prodotto.Id = prodottoDTO.Id;
             prodotto.NomeProdotto = prodottoDTO.NomeProdotto;
             prodotto.Prezzo = (float)prodottoDTO.Prezzo;
+            prodotto.CodiceProdotto = prodotto.CodiceProdotto;
             prodotto.IdVetrina = prodottoDTO.IdVetrina;
             prodotto.QuantitaDisponibile = (int)prodottoDTO.Quantita;
             //prodotto.IdOrdine = prodottoDTO.IdOrdine;

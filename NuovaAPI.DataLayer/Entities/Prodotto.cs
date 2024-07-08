@@ -6,6 +6,7 @@ namespace NuovaAPI.DataLayer.Entities
     public class Prodotto
     {
         public int Id { get; set; }
+        public string CodiceProdotto { get; set; }
         public string NomeProdotto { get; set; }
         public float Prezzo { get; set; }
         public int QuantitaDisponibile { get; set; }

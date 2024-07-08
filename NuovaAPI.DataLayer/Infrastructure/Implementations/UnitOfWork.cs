@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using NuovaAPI.DataLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 
 namespace NuovaAPI.DataLayer.Infrastructure.Implementations
 {
@@ -16,15 +12,19 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
         private readonly IRepository<Vetrina> vetrinaRepository;
         private readonly IRepository<Ordini> ordiniRepository;
         private readonly IRepository<OrdineProdotto> ordineProdottoRepository;
+        private readonly IRepository<Taxonomy> taxonomyRepository;
+        private readonly IRepository<Termini> terminiRepository;
         private IDbContextTransaction _transaction;
 
         public IRepository<Cliente> ClienteRepository { get { return clienteRepository; } }
         public IRepository<Prodotto> ProdottoRepository { get { return prodottoRepository; } }
         public IRepository<Vetrina> VetrinaRepository { get { return vetrinaRepository; } }
         public IRepository<Ordini> OrdiniRepository { get { return ordiniRepository; } }
-        public IRepository<OrdineProdotto> OrdineProdottoRepository { get { return  ordineProdottoRepository; } }    
+        public IRepository<OrdineProdotto> OrdineProdottoRepository { get { return ordineProdottoRepository; } }
+        public IRepository<Taxonomy> TaxonomyRepository { get { return taxonomyRepository; } }
+        public IRepository<Termini> TerminiRepository { get { return terminiRepository; } } 
 
-        public UnitOfWork(AppDbContext appDbContext, IRepository<Cliente> clienteRepository, IRepository<Prodotto> prodottoRepository, IRepository<Vetrina> vetrinaRepository, IRepository<Ordini> ordiniRepository, IRepository<OrdineProdotto> ordineProdottoRepository)
+        public UnitOfWork(AppDbContext appDbContext, IRepository<Cliente> clienteRepository, IRepository<Prodotto> prodottoRepository, IRepository<Vetrina> vetrinaRepository, IRepository<Ordini> ordiniRepository, IRepository<OrdineProdotto> ordineProdottoRepository, IRepository<Taxonomy> taxonomyRepository, IRepository<Termini> terminiRepository)
         {
             _appDbContext = appDbContext;
             this.clienteRepository = clienteRepository;
@@ -32,6 +32,8 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
             this.vetrinaRepository = vetrinaRepository;
             this.ordiniRepository = ordiniRepository;
             this.ordineProdottoRepository = ordineProdottoRepository;
+            this.taxonomyRepository = taxonomyRepository;
+            this.terminiRepository = terminiRepository;
             disposed = false;
         }
 
@@ -40,9 +42,10 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
             _appDbContext.SaveChanges();
         }
 
-        public void BeginTransaction()
+        public IDbContextTransaction BeginTransaction()
         {
             _transaction = _appDbContext.Database.BeginTransaction();
+            return _transaction;
         }
 
         public void Commit()
@@ -66,7 +69,7 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
         private bool disposed;
         protected virtual void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 _appDbContext.Dispose();
             }
@@ -77,6 +80,34 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        //public async Task BulkInsertAsync(List<Cliente> clienti)
+        //{
+        //    await _appDbContext.BulkInsertAsync(clienti);
+        //}
+
+        //public async Task BulkUpdateAsync(List<Cliente> clienti)
+        //{
+        //    await _appDbContext.BulkUpdateAsync(clienti);
+        //}
+
+        public async Task BulkMergeAsync(List<Cliente> nuoviClienti, List<Cliente> clientiDaAggiornare, List<Taxonomy> listTaxonomies, List<Termini> listTermini)
+        {
+            await _appDbContext.BulkMergeAsync(nuoviClienti);
+            await _appDbContext.BulkMergeAsync(clientiDaAggiornare);
+            await _appDbContext.BulkMergeAsync(listTaxonomies);
+            await _appDbContext.BulkMergeAsync(listTermini);
+        }
+
+        //public async Task BulkMergeAsync(IEnumerable<TEntity> entities)
+        //{
+        //    await _appDbContext.BulkMergeAsync(entities);
+        //}
+
+        public async Task SaveAsync()
+        {
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }

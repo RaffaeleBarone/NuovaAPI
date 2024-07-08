@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Infrastructure;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NuovaAPI.DataLayer.Manager
 {
@@ -178,5 +177,65 @@ namespace NuovaAPI.DataLayer.Manager
             _unitOfWork.Save();
             return clienteDaModificare;
         }
+
+        public async Task AddOrUpdateClienti(List<ClienteDtoJson> clienti)
+        {
+            using var transaction = _unitOfWork.BeginTransaction();
+
+            try
+            {
+                var nomiClienti = clienti.Select(c => c.Nome).ToList();
+                var cognomiClienti = clienti.Select(c => c.Cognome).ToList();
+
+                var clientiEsistenti = await _unitOfWork.ClienteRepository
+                    .Get(c => nomiClienti.Contains(c.Nome) && cognomiClienti.Contains(c.Cognome))
+                    .ToListAsync();
+
+                var listaClienti = new List<Cliente>();
+               
+
+                foreach (var clienteDtoJson in clienti)
+                {
+                    var clienteEsistente = clientiEsistenti.FirstOrDefault(c => c.Nome == clienteDtoJson.Nome && c.Cognome == clienteDtoJson.Cognome);
+
+                    DateTime.TryParse(clienteDtoJson.DataDiNascita, out DateTime dataDiNascita);
+                    
+                    if (clienteEsistente != null)
+                    {
+                        
+                        clienteEsistente.DataDiNascita = dataDiNascita;
+
+                        //_unitOfWork.ClienteRepository.Update(clienteEsistente);
+                        listaClienti.Add(clienteEsistente);
+                    }
+                    else
+                    {
+                        var nuovoCliente = new Cliente
+                        {
+                            Nome = clienteDtoJson.Nome,
+                            Cognome = clienteDtoJson.Cognome,
+                            DataDiNascita = dataDiNascita
+                        };
+
+                        //_unitOfWork.ClienteRepository.Add(nuovoCliente);
+                        listaClienti.Add(nuovoCliente);
+                    }
+                }
+
+                if (listaClienti.Count != 0)
+                {
+                    await _unitOfWork.ClienteRepository.BulkMergeAsync(listaClienti);
+                }
+
+                _unitOfWork.Save();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new ApplicationException($"Errore durante l'aggiornamento dei clienti: {ex.Message}");
+            }
+        }
+
     }
 }

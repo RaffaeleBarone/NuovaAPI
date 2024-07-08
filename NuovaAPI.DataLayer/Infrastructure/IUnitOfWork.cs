@@ -1,4 +1,5 @@
-﻿using NuovaAPI.DataLayer.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Infrastructure.Implementations;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,15 @@ namespace NuovaAPI.DataLayer.Infrastructure
         IRepository<Vetrina> VetrinaRepository { get; }
         IRepository<Ordini> OrdiniRepository { get; }
         IRepository<OrdineProdotto> OrdineProdottoRepository { get; }
+        IRepository<Taxonomy> TaxonomyRepository { get; }
+        IRepository<Termini> TerminiRepository { get; }
         void Save();
-        void BeginTransaction();
+        IDbContextTransaction BeginTransaction();
         void Commit();
         void Dispose();
-
-
+        //Task BulkInsertAsync(List<Cliente> clienti);
+        //Task BulkUpdateAsync(List<Cliente> clienti);
+        Task BulkMergeAsync(List<Cliente> nuoviClienti, List<Cliente> clientiDaAggiornare, List<Taxonomy> listTaxonomies, List<Termini> listTermini);
+        Task SaveAsync();
     }
 }

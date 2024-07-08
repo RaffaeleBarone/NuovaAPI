@@ -2,6 +2,7 @@
 using NuovaAPI.Commons.DTO;
 using NuovaAPI.DataLayer.Entities;
 using NuovaAPI.DataLayer.Manager;
+using System.Text.Json;
 
 namespace NuovaAPI.Worker_Services
 {
@@ -53,6 +54,34 @@ namespace NuovaAPI.Worker_Services
         public async Task DeleteCliente(int id)
         {
             await _clienteManager.RemoveCliente(id);
+        }
+
+        //public async Task AddOrUpdateClientiAsync(List<ClienteDtoJson> clienti)
+        //{
+        //    await _clienteManager.AddOrUpdateClienti(clienti);
+        //}
+
+
+        public async Task AddOrUpdateClientiAsync(IFormFile file)
+        {
+            try
+            {
+                using var stream = new StreamReader(file.OpenReadStream());
+                var fileContent = await stream.ReadToEndAsync();
+                var clienti = JsonSerializer.Deserialize<List<ClienteDtoJson>>(fileContent);
+
+                if (clienti == null || clienti.Count == 0)
+                {
+                    throw new ArgumentException("Il file JSON non contiene dati");
+                }
+
+                await _clienteManager.AddOrUpdateClienti(clienti);
+            }
+
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Errore: {ex.Message}");
+            }
         }
     }
 }

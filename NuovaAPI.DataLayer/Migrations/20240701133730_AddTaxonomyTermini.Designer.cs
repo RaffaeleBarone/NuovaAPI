@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NuovaAPI.DataLayer;
 
@@ -11,9 +12,11 @@ using NuovaAPI.DataLayer;
 namespace NuovaAPI.DataLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240701133730_AddTaxonomyTermini")]
+    partial class AddTaxonomyTermini
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,19 +145,8 @@ namespace NuovaAPI.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Lingua")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("TaxonomyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Traduzione")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -227,6 +219,34 @@ namespace NuovaAPI.DataLayer.Migrations
                         .WithMany("Termini")
                         .HasForeignKey("TaxonomyId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("NuovaAPI.DataLayer.Entities.Labels", "Labels", b1 =>
+                        {
+                            b1.Property<int>("TerminiId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("en_US")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("fr_FR")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("it_IT")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("TerminiId");
+
+                            b1.ToTable("Termini");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TerminiId");
+                        });
+
+                    b.Navigation("Labels")
                         .IsRequired();
 
                     b.Navigation("Taxonomy");

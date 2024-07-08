@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using EFCore.BulkExtensions;
+using NuovaAPI.DataLayer.Entities;
+using System.Linq.Expressions;
 
 namespace NuovaAPI.DataLayer.Infrastructure
 {
@@ -10,8 +12,10 @@ namespace NuovaAPI.DataLayer.Infrastructure
         void Update(TEntity entityToUpdate);
         TEntity Delete(int id);
         TEntity Delete(TEntity entityToDelete);
-        
+        //Task BulkInsertAsync(List<Cliente> clienti);
+        //Task BulkUpdateAsync(List<Cliente> clienti);
+        Task BulkMergeAsync(IEnumerable<TEntity> entities);
         Task SaveAsync();
-
+        Task GetAllAsync(bool includeTermini);
     }
 }

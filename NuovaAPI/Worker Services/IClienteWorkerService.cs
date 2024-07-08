@@ -11,5 +11,6 @@ namespace NuovaAPI.Worker_Services
         Task<ClienteDTOByID> GetClienteId(int id);
         Task<Cliente> PutCliente(int id, ClienteDTO clienteDTO);
         Task DeleteCliente(int id);
+        Task AddOrUpdateClientiAsync(IFormFile file);
     }
 }

@@ -33,7 +33,8 @@ namespace NuovaAPI.DataLayer
         public DbSet<Cliente> Clienti { get; set; }
         public DbSet<Ordini> Ordini { get; set; }
         public DbSet<OrdineProdotto> OrdiniProdotti { get; set; }
-
+        public DbSet<Taxonomy> Taxonomy { get; set; }
+        public DbSet<Termini> Termini { get; set; }
         public AppDbContext()
         {
 

@@ -15,5 +15,6 @@ namespace NuovaAPI.DataLayer.Manager
         Task<IEnumerable<ClienteDTO>> GetClienti(string nome, string cognome, string orderBy, bool ascending = true, int pageNumber = 1, int pageSize = 10);
         Task<ClienteDTOByID> GetIdCliente(int id);
         Task<Cliente> ModificaCliente(int id, ClienteDTO clienteDTO);
+        Task AddOrUpdateClienti(List<ClienteDtoJson> clienti);
     }
 }

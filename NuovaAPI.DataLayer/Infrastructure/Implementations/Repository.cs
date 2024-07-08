@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
+using NuovaAPI.DataLayer.Entities;
 using System.Linq.Expressions;
 
 namespace NuovaAPI.DataLayer.Infrastructure.Implementations
@@ -62,9 +64,29 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
             return entityToDelete;
         }
 
+        //public async Task BulkInsertAsync(List<Cliente> clienti)
+        //{
+        //    await _appDbContext.BulkInsertAsync(clienti);
+        //}
+
+        //public async Task BulkUpdateAsync(List<Cliente> clienti)
+        //{
+        //    await _appDbContext.BulkUpdateAsync(clienti);
+        //}
+
+        public async Task BulkMergeAsync(IEnumerable<TEntity> entities)
+        {
+            await _appDbContext.BulkMergeAsync(entities);
+        }
+
         public virtual async Task SaveAsync()
         {
             await _appDbContext.SaveChangesAsync();
+        }
+
+        public Task GetAllAsync(bool includeTermini)
+        {
+            throw new NotImplementedException();
         }
     }
 }

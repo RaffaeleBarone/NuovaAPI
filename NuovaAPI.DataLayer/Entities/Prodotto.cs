@@ -2,7 +2,6 @@
 
 namespace NuovaAPI.DataLayer.Entities
 {
-    //[PrimaryKey(nameof(Id))]
     public class Prodotto
     {
         public int Id { get; set; }

@@ -14,27 +14,22 @@ namespace NuovaAPI.DataLayer.Configurations
         public void Configure(EntityTypeBuilder<Termini> builder)
         {
             builder.ToTable("Termini")
-           .HasKey(x => x.Id);
+                .HasKey(x => new
+                {
+                    x.TaxonomyId,
+                    x.Traduzione,
+                    x.Lingua
+                });
 
-            builder.HasOne(te => te.Taxonomy)
-                .WithMany(t => t.Termini)
-                .HasForeignKey(te => te.TaxonomyId);
-
-            //builder.OwnsOne(te => te.Labels, lb =>
-            //{
-            //    lb.Property(l => l.en_US).IsRequired();
-            //    lb.Property(l => l.fr_FR).IsRequired();
-            //    lb.Property(l => l.it_IT).IsRequired();
-            //});
+            //builder.HasOne(te => te.Taxonomy)
+            //    .WithMany(t => t.Termini)
+            //    .HasForeignKey(te => te.TaxonomyId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(te => te.Lingua).IsRequired();
             builder.Property(te => te.Traduzione).IsRequired();
             builder.Property(te => te.IsDefault).IsRequired();
-
-            //builder.HasOne(te => te.Taxonomy)
-            //     .WithMany(t => t.Termini)
-            //.HasForeignKey(te => te.TaxonomyId);
-
         }
     }
+
 }

@@ -12,15 +12,15 @@ using NuovaAPI.DataLayer;
 namespace NuovaAPI.DataLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240705081325_IsDefault")]
-    partial class IsDefault
+    [Migration("20240710132319_nuoviAttributiTaxonomy")]
+    partial class nuoviAttributiTaxonomy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -123,14 +123,25 @@ namespace NuovaAPI.DataLayer.Migrations
             modelBuilder.Entity("NuovaAPI.DataLayer.Entities.Taxonomy", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("LastUpdate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("en_US")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
 
@@ -139,29 +150,19 @@ namespace NuovaAPI.DataLayer.Migrations
 
             modelBuilder.Entity("NuovaAPI.DataLayer.Entities.Termini", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Lingua")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("TaxonomyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Traduzione")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Lingua")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("TaxonomyId");
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.HasKey("TaxonomyId", "Traduzione", "Lingua");
 
                     b.ToTable("Termini", (string)null);
                 });

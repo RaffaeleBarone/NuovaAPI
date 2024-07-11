@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NuovaAPI.DataLayer.Entities;
 using System.Linq.Expressions;
+using Z.BulkOperations;
 
 namespace NuovaAPI.DataLayer.Infrastructure.Implementations
 {
@@ -74,19 +75,20 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
         //    await _appDbContext.BulkUpdateAsync(clienti);
         //}
 
+        public async Task BulkMergeAsync(IEnumerable<TEntity> entities, Action<BulkOperation<TEntity>> bulkConfig)
+        {
+            await _appDbContext.BulkMergeAsync(entities.ToList(), bulkConfig);
+        }
+
         public async Task BulkMergeAsync(IEnumerable<TEntity> entities)
         {
-            await _appDbContext.BulkMergeAsync(entities);
+            await _appDbContext.BulkMergeAsync(entities.ToList());
         }
+
 
         public virtual async Task SaveAsync()
         {
             await _appDbContext.SaveChangesAsync();
-        }
-
-        public Task GetAllAsync(bool includeTermini)
-        {
-            throw new NotImplementedException();
-        }
+        }      
     }
 }

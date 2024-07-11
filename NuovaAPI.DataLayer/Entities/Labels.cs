@@ -6,9 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NuovaAPI.DataLayer.Entities
-{
-    //[Owned]
-    public class Labels
+{    public class Labels
     {
         public string en_US {  get; set; }
         public string fr_FR { get; set; }

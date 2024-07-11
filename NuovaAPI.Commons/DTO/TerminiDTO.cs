@@ -9,7 +9,7 @@ namespace NuovaAPI.Commons.DTO
     public class TerminiDTO
     {
         public int Id { get; set; }
-        public string Lingua { get; set;}
+        
         //public LabelsDTO Labels { get; set; }
         public Dictionary<string, string> Labels { get; set; }
     }

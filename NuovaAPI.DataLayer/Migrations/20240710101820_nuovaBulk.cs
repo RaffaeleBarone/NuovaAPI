@@ -5,7 +5,7 @@
 namespace NuovaAPI.DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTaxonomyTermini : Migration
+    public partial class nuovaBulk : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,8 +21,7 @@ namespace NuovaAPI.DataLayer.Migrations
                 name: "Taxonomy",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -34,16 +33,14 @@ namespace NuovaAPI.DataLayer.Migrations
                 name: "Termini",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Labels_en_US = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Labels_fr_FR = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Labels_it_IT = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TaxonomyId = table.Column<int>(type: "int", nullable: false)
+                    Lingua = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Traduzione = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TaxonomyId = table.Column<int>(type: "int", nullable: false),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Termini", x => x.Id);
+                    table.PrimaryKey("PK_Termini", x => new { x.TaxonomyId, x.Traduzione, x.Lingua });
                     table.ForeignKey(
                         name: "FK_Termini_Taxonomy_TaxonomyId",
                         column: x => x.TaxonomyId,
@@ -51,11 +48,6 @@ namespace NuovaAPI.DataLayer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Termini_TaxonomyId",
-                table: "Termini",
-                column: "TaxonomyId");
         }
 
         /// <inheritdoc />

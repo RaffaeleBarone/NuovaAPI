@@ -24,7 +24,9 @@ namespace NuovaAPI.DataLayer.Infrastructure
         void Dispose();
         //Task BulkInsertAsync(List<Cliente> clienti);
         //Task BulkUpdateAsync(List<Cliente> clienti);
-        Task BulkMergeAsync(List<Cliente> nuoviClienti, List<Cliente> clientiDaAggiornare, List<Taxonomy> listTaxonomies, List<Termini> listTermini);
+       
+        
         Task SaveAsync();
+
     }
 }

@@ -92,13 +92,6 @@ namespace NuovaAPI.DataLayer.Infrastructure.Implementations
         //    await _appDbContext.BulkUpdateAsync(clienti);
         //}
 
-        public async Task BulkMergeAsync(List<Cliente> nuoviClienti, List<Cliente> clientiDaAggiornare, List<Taxonomy> listTaxonomies, List<Termini> listTermini)
-        {
-            await _appDbContext.BulkMergeAsync(nuoviClienti);
-            await _appDbContext.BulkMergeAsync(clientiDaAggiornare);
-            await _appDbContext.BulkMergeAsync(listTaxonomies);
-            await _appDbContext.BulkMergeAsync(listTermini);
-        }
 
         //public async Task BulkMergeAsync(IEnumerable<TEntity> entities)
         //{

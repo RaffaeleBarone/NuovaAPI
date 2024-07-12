@@ -10,7 +10,6 @@ namespace NuovaAPI.DataLayer.Manager
         private readonly IUnitOfWork _unitOfWork;
         public TaxonomyManager(IUnitOfWork unitOfWork)
         {
-
             _unitOfWork = unitOfWork;
         }
         public async Task AddOrUpdateTaxonomy(List<TaxonomyDTO> taxonomies)
@@ -35,8 +34,6 @@ namespace NuovaAPI.DataLayer.Manager
                             IsDefault = x.Key == "en_US"
                         }));
 
-
-
                         listaTaxonomies.Add(new Taxonomy
                         {
                             Id = traduzioni.Id,
@@ -45,34 +42,37 @@ namespace NuovaAPI.DataLayer.Manager
                             isActive = true,
                             LastUpdate = now
                         }); ;
-
-
                     }
-
-
                 }
 
-                Action<BulkOperation<Taxonomy>> bulkTaxonomy = opt => { opt.BatchSize = 500; opt.BatchTimeout = 180; opt.IgnoreOnMergeUpdateExpression = x => x.LastUpdate; };
+                Action<BulkOperation<Taxonomy>> bulkTaxonomy = opt => { opt.BatchSize = 100; opt.BatchTimeout = 600; opt.IgnoreOnMergeUpdateExpression = x => x.LastUpdate; };
                 await _unitOfWork.TaxonomyRepository.BulkMergeAsync(listaTaxonomies, bulkTaxonomy);
 
+                var existingTaxonomies = _unitOfWork.TaxonomyRepository.Get(x => x.isActive == true && x.LastUpdate < now).ToList(); //isActive true e lastUpdate minore della data di inserimento
 
+                //combinare existingTaxonomies e listaTaxonomies = lista termini da disabilitare e bulk merge su lista da disabilitare    trovare quelle non presenti in listaTaxonomies
+                //foreach (var existingTaxonomy in existingTaxonomies)
+                //{
+                //    var matchingTaxonomy = listaTaxonomies.FirstOrDefault(x => x.Id == existingTaxonomy.Id);
+                //    if (matchingTaxonomy == null)
+                //    {
+                //        existingTaxonomy.isActive = false;
+                //    }
+                //}
 
-                var existingTaxonomies = _unitOfWork.TaxonomyRepository.Get(x => x.isActive == true && x.LastUpdate < now).ToList(); //isActive true e lastUpdate minore della data din inserimento
+                //await _unitOfWork.TaxonomyRepository.BulkMergeAsync(existingTaxonomies, bulkTaxonomy);
 
+                var toDisable = existingTaxonomies
+                    .Where(existing => !listaTaxonomies.Any(newTaxonomy => newTaxonomy.Id == existing.Id))
+                    .Select(taxonomy => { taxonomy.isActive = false; return taxonomy; })
+                    .ToList();
 
-                //combinare existingTaxonomies e listaTaxonomies = lista termini da disabilitare e bulk merge su lista da disabilitare
-                foreach (var existingTaxonomy in existingTaxonomies)
+                if (toDisable.Any())
                 {
-                    var matchingTaxonomy = listaTaxonomies.FirstOrDefault(x => x.Id == existingTaxonomy.Id);
-                    if (matchingTaxonomy == null)
-                    {
-                        existingTaxonomy.isActive = false;
-                    }
+                    await _unitOfWork.TaxonomyRepository.BulkMergeAsync(toDisable, bulkTaxonomy);
                 }
 
-                await _unitOfWork.TaxonomyRepository.BulkMergeAsync(existingTaxonomies, bulkTaxonomy);
-
-                Action<BulkOperation<Termini>> bulkTerms = opt => { opt.BatchSize = 500; opt.BatchTimeout = 180; };
+                Action<BulkOperation<Termini>> bulkTerms = opt => { opt.BatchSize = 100; opt.BatchTimeout = 600; };
                 await _unitOfWork.TerminiRepository.BulkMergeAsync(listaTermini, bulkTerms);
                 transaction.Commit();
             }
@@ -83,8 +83,5 @@ namespace NuovaAPI.DataLayer.Manager
                 throw new ApplicationException($"Errore durante l'aggiornamento dei dati: {ex.Message}. Dettagli: {innerException}");
             }
         }
-
-
-
     }
 }
